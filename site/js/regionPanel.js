@@ -1,6 +1,7 @@
 import { h, icon, replaceChildren } from './dom.js';
 import { BINS, binIndex, pct, range, regionVerdict, shortName } from './format.js';
 import { ICONS } from './icons.js';
+import { oddsButton } from './bet/oddsButton.js';
 
 function scale(region) {
   const bands = BINS.map((bin, i) => {
@@ -20,7 +21,16 @@ function row(label, value) {
   return value == null ? null : h('div', { class: 'facts__row' }, h('dt', { text: label }), h('dd', { text: value }));
 }
 
-export function renderRegionPanel(target, data, selected, onSelect) {
+function betBlock(store, region) {
+  if (!store?.state.line) return null;
+  const pair = (key) => h('div', { class: 'board__odds' }, oddsButton(store, key, 'yes', { compact: false }), oddsButton(store, key, 'no'));
+  return h('div', { class: 'panel__bets' },
+    h('h4', { text: 'Ставки на область' }),
+    h('div', { class: 'panel__bet' }, h('span', { text: 'Тривога до 07:00' }), pair(`alarm|${region}`)),
+    h('div', { class: 'panel__bet' }, h('span', { text: 'Тихо з 01:00 до 07:00' }), pair(`quiet_late|${region}`)));
+}
+
+export function renderRegionPanel(target, data, selected, onSelect, store) {
   if (!selected) {
     const loud = Object.entries(data.regions).filter(([, r]) => r.p >= 0.7 && r.status !== 'ongoing').length;
     replaceChildren(target,
@@ -46,5 +56,6 @@ export function renderRegionPanel(target, data, selected, onSelect) {
       row('Зазвичай (останні тижні)', pct(region.p_base)),
       row('Тихо з 01:00 до 07:00', pct(region.p_quiet_late)),
       region.active_now ? row('Відбій протягом години', pct(region.p_clear_1h)) : null,
-      row('Схожих ночей в основі', `≈${Math.round(region.n_eff)}`)));
+      row('Схожих ночей в основі', `≈${Math.round(region.n_eff)}`)),
+    betBlock(store, selected));
 }

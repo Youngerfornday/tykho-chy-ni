@@ -21,7 +21,7 @@ function axes() {
 export function renderCalibration(target, backtest) {
   const bins = backtest.reliability.filter((b) => b.n > 0 && b.mean_p != null);
   const maxN = Math.max(...bins.map((b) => b.n));
-  const tip = h('div', { class: 'calib__tip', role: 'status', text: 'Наведіть на точку, щоб побачити деталі.' });
+  const tip = h('div', { class: 'calib__tip', role: 'status', text: 'Торкніться або наведіть на точку, щоб побачити деталі.' });
   const describe = (b) => `Коли модель казала ≈${pct(b.mean_p)}, тривога була в ${pct(b.freq)} випадків (${b.n} пар «область-ніч»).`;
 
   const points = bins.map((b) => {

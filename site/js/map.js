@@ -17,7 +17,7 @@ function tooltipContent(name, region, permanent) {
   return [
     h('strong', { text: name }),
     h('span', { class: 'tooltip__big', text: pct(region.p) }),
-    h('span', { text: `тривога до 07:00 · діапазон ${range(region.lo, region.hi)}` }),
+    h('span', null, 'тривога до 07:00 · діапазон ', h('span', { class: 'tooltip__range', text: range(region.lo, region.hi) })),
     h('span', { class: 'tooltip__muted', text: `${now} · зазвичай ${pct(region.p_base)}` }),
   ];
 }
@@ -27,13 +27,15 @@ export function createMap(mapData, { canvas, tooltip, onSelect }) {
   const fills = s('g', { class: 'map__regions' });
   const pulses = s('g', { class: 'map__pulses', 'aria-hidden': 'true' });
   const selection = s('path', { class: 'map__selected', d: '', 'aria-hidden': 'true' });
+  const focusRing = s('path', { class: 'map__focus', d: '', 'aria-hidden': 'true' });
   const labels = s('g', { class: 'map__labels', 'aria-hidden': 'true' });
   const stamp = s('text', { class: 'map__stamp-time', x: 20, y: 618 });
+  const stampShort = s('text', { class: 'map__stamp-time map__stamp-time--short', x: 20, y: 618 });
   const watermark = s('g', { class: 'map__watermark' },
     s('text', { class: 'map__stamp', x: 20, y: 560, text: 'ПРОГНОЗ' }),
-    s('text', { class: 'map__stamp-sub', x: 20, y: 590, text: 'не офіційна тривога' }), stamp);
+    s('text', { class: 'map__stamp-sub', x: 20, y: 590, text: 'не офіційна тривога' }), stamp, stampShort);
   const svg = s('svg', { class: 'map', viewBox: `0 0 ${w} ${hgt}`, role: 'group', 'aria-label': 'Карта шансів тривоги по областях' },
-    s('defs', null, hatch()), fills, pulses, selection, labels, watermark);
+    s('defs', null, hatch()), fills, pulses, selection, focusRing, labels, watermark);
 
   const nodes = new Map(mapData.regions.map((region) => {
     const permanent = region.kind === 'permanent';
@@ -70,8 +72,12 @@ export function createMap(mapData, { canvas, tooltip, onSelect }) {
     entry.path.addEventListener('pointermove', (event) => showTip(event, entry));
     entry.path.addEventListener('pointerleave', hideTip);
     if (entry.permanent) return;
-    const pick = () => onSelect(selectedName === name ? null : name);
+    let lastPointer = 'mouse';
+    const pick = () => onSelect(selectedName === name ? null : name, { viaTouch: lastPointer === 'touch' });
+    entry.path.addEventListener('pointerdown', (event) => { lastPointer = event.pointerType; });
     entry.path.addEventListener('click', pick);
+    entry.path.addEventListener('focus', () => focusRing.setAttribute('d', entry.region.d));
+    entry.path.addEventListener('blur', () => focusRing.setAttribute('d', ''));
     entry.path.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); pick(); }
     });
@@ -86,6 +92,7 @@ export function createMap(mapData, { canvas, tooltip, onSelect }) {
     current = data;
     selectedName = selected;
     stamp.textContent = `Станом на ${day(new Date(data.generated_at))}, ${clock(data.generated_at)}`;
+    stampShort.textContent = `${day(new Date(data.generated_at))}, ${clock(data.generated_at)}`;
     replaceChildren(pulses);
     nodes.forEach((entry, name) => {
       if (entry.permanent) {
@@ -115,7 +122,7 @@ export function renderPill(target, data) {
   const chips = BINS.map((bin, i) => ({ bin, i, count: counts[i] })).reverse().filter((c) => c.count > 0)
     .map(({ bin, count }) => h('span', { class: 'pill__item', title: bin.label },
       h('span', { class: 'chip', style: { background: bin.color } }), h('span', { text: String(count) })));
-  replaceChildren(target, h('span', { class: 'pill__title', text: 'Області:' }), chips);
+  replaceChildren(target, h('span', { class: 'pill__title', text: 'Прогноз · області:' }), chips);
 }
 
 export function renderLegend(target) {

@@ -13,11 +13,11 @@ from .regions import FORECAST_REGIONS, KYIV_CITY, WEST_REGIONS
 FRONTLINE_BASE_RATE = 0.9
 
 
-def _night_count(night: NightObservation, base_rates: Mapping[str, float]) -> float:
+def night_count(night: NightObservation, base_rates: Mapping[str, float], regions: Sequence[str] = FORECAST_REGIONS) -> float:
     # ponytail: regions missing from a night (volunteer data rejected) are filled with
     # their base rate, so over/under lines are slightly smoothed for the newest nights.
-    missing = sum(base_rates[r] for r in FORECAST_REGIONS if r not in night.covered)
-    return len(night.alerted & night.covered) + missing
+    missing = sum(base_rates[r] for r in regions if r not in night.covered)
+    return len(night.alerted & night.covered & set(regions)) + missing
 
 
 def national_summary(
@@ -27,7 +27,7 @@ def national_summary(
     current: CurrentState,
 ) -> dict:
     base_rates = {r: estimates[r].p_base for r in FORECAST_REGIONS}
-    counts = [_night_count(n, base_rates) for n in nights]
+    counts = [night_count(n, base_rates) for n in nights]
     weights = [recency(target, n) * similarity(n, current) for n in nights]
     expected = sum(estimates[r].p for r in FORECAST_REGIONS)
     line = math.floor(expected) + 0.5
@@ -56,7 +56,7 @@ def build_markets(estimates: Mapping[str, RegionEstimate], national: dict) -> Li
     board = [
         market("west_quiet", "Захід тихий до 07:00", national["p_west_quiet"], national["west_n_eff"],
                "Жодної тривоги у 7 західних областях"),
-        market("total_over", f"Тривоги більш ніж у {national['total_line']:g} областях", national["p_over"],
+        market("total_over", f"Тривоги у {int(national['total_line'] + 0.5)}+ областях", national["p_over"],
                national["n_eff"], "Тотал областей за ніч"),
     ]
     if kyiv.active_now:

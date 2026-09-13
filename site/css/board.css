@@ -1,57 +1,70 @@
 .board { padding-block: clamp(48px, 8vw, 104px); }
 
+.board__tabs { margin-top: 28px; display: flex; gap: 6px; flex-wrap: wrap; }
+.board__tab {
+  min-height: 44px; padding: 10px 16px; border-radius: 999px; cursor: pointer;
+  font: 600 0.95rem/1 var(--font-ui); color: var(--ink-2);
+  background: transparent; border: 1px solid var(--line);
+}
+.board__tab:hover { color: var(--ink); border-color: var(--muted); }
+.board__tab[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+.board__status { display: flex; align-items: center; gap: 8px; margin: 16px 0 0; font-size: 0.9rem; color: var(--muted); }
+.board__status--closed { color: var(--yellow-soft); }
+
 .board__table {
-  margin-top: 32px;
+  margin-top: 16px;
   background: var(--bg-deep);
   border: 1px solid var(--line);
   border-radius: 14px;
-  padding: 8px clamp(12px, 2.4vw, 28px);
-  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  padding: 4px clamp(12px, 2.4vw, 28px);
 }
+.board__table--dense { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr)); column-gap: 40px; }
+.board__table--dense .board__row--head { grid-column: 1 / -1; }
 
 .board__row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 12px 24px;
-  padding: 16px 0;
+  gap: 10px 20px;
+  padding: 14px 0;
   border-top: 1px solid var(--line);
 }
 .board__row--head {
-  border-top: 0; padding: 12px 0 10px;
+  border-top: 0; padding: 12px 0 8px;
   font: 600 0.78rem/1 var(--font-ui); color: var(--muted); letter-spacing: 0.04em;
 }
-.board__head-odds { text-align: right; }
+.board__head-odds { text-align: right; padding-right: 8px; }
+.board__table--dense .board__row:nth-child(2) { border-top: 0; }
 
-.board__market { display: grid; gap: 4px; min-width: 0; }
-.board__title { font: 600 clamp(1rem, 1.6vw, 1.15rem)/1.3 var(--font-ui); color: var(--ink); }
-.board__note { font-size: 0.85rem; color: var(--muted); }
+.board__market { display: grid; gap: 3px; min-width: 0; }
+.board__title { font: 600 clamp(0.98rem, 1.5vw, 1.1rem)/1.3 var(--font-ui); color: var(--ink); }
+.board__note { font-size: 0.83rem; color: var(--muted); }
+.board__odds { display: flex; gap: 8px; }
+.board__empty { margin-top: 24px; color: var(--muted); }
 
-.board__odds { display: flex; gap: 10px; }
-
-.flap {
-  display: grid; justify-items: center; gap: 6px;
-  min-width: 112px; padding: 8px 10px 10px;
+/* Odds button: flat tile in the map's panel material. */
+.odds {
+  display: grid; justify-items: center; align-content: center; gap: 4px;
+  min-width: 84px; min-height: 56px; padding: 6px 12px;
   background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+  color: var(--ink); cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 120ms ease;
 }
-.flap__label { font: 700 0.68rem/1 var(--font-data); letter-spacing: 0.12em; color: var(--muted); }
-.flap__digits { display: flex; gap: 3px; }
-.flap__ch {
-  position: relative; display: inline-grid; place-items: center;
-  width: 1.28em; height: 1.7em;
-  font: 700 clamp(1.1rem, 2vw, 1.4rem)/1 var(--font-data); color: var(--yellow-soft);
-  background: linear-gradient(180deg, #1b2029 0 49%, #11151c 51% 100%);
-  border-radius: 4px;
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.5);
-}
-.flap__ch::after {
-  content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, 0.7);
-}
-.flap__ch--spin { color: var(--ink-2); }
+.odds:hover { border-color: var(--muted); background: #30343a; }
+.odds:active { transform: translateY(1px); }
+.odds__label { font: 600 0.7rem/1 var(--font-ui); letter-spacing: 0.06em; color: var(--muted); text-transform: uppercase; }
+.odds__value { font: 700 1.12rem/1 var(--font-data); color: var(--yellow-soft); letter-spacing: -0.01em; }
+.odds__value--spin { color: var(--ink-2); }
+.odds[aria-pressed="true"] { background: var(--yellow); border-color: var(--yellow); }
+.odds[aria-pressed="true"] .odds__label, .odds[aria-pressed="true"] .odds__value { color: var(--bg); }
+.odds--off { cursor: not-allowed; background: transparent; border-style: dashed; }
+.odds--off .odds__value { color: var(--muted); }
+.odds--compact { min-width: 64px; min-height: 40px; padding: 4px 10px; }
+.odds--compact .odds__value { font-size: 0.95rem; }
 
 @media (max-width: 720px) {
   .board__row { grid-template-columns: minmax(0, 1fr); }
   .board__head-odds { display: none; }
-  .board__odds { justify-content: flex-start; }
-  .flap { min-width: 0; flex: 1; }
+  .board__odds .odds { flex: 1; }
 }

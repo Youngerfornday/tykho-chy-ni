@@ -1,8 +1,9 @@
 import unittest
 from datetime import date, datetime, time, timedelta, timezone
 
-from forecast.build import build
+from forecast.build import build, build_bundle
 from forecast.regions import FORECAST_REGIONS, KYIV_CITY
+from forecast.snapshots import Snapshot
 from forecast.windows import local_at
 
 NOW = datetime(2026, 9, 13, 19, 40, tzinfo=timezone.utc)  # 22:40 Kyiv
@@ -45,6 +46,23 @@ class BuildTest(unittest.TestCase):
         self.assertGreater(payload["regions"][KYIV_CITY]["p"], payload["regions"]["Закарпатська область"]["p"])
         self.assertTrue(all(1.01 <= m["odds_yes"] <= 50 for m in payload["markets"]))
         self.assertEqual(payload["backtest"]["nights"], 60)
+
+    def test_bundle_has_line_results_and_snapshots(self):
+        official = rows_for("oblast", range(6, 120, 2), FORECAST_REGIONS[:20])
+        volunteer = rows_for("region", range(0, 120, 2), FORECAST_REGIONS[:20])
+        live = {"cachedat": "2026-09-13 22:38:00", "states": {r: {"alertnow": r == KYIV_CITY} for r in FORECAST_REGIONS}}
+        previous = (Snapshot(int(NOW.timestamp()) - 1800, (KYIV_CITY,)),)
+
+        files = build_bundle(NOW, official, volunteer, datetime(2026, 9, 13, 4, tzinfo=timezone.utc), live, previous)
+
+        self.assertEqual(set(files), {"forecast.json", "results.json", "snapshots.json"})
+        forecast = files["forecast.json"]
+        self.assertEqual(len(forecast["line"]["columns"]), 50)
+        self.assertEqual(forecast["line"]["anchor"], forecast["window"]["anchor"])
+        titles = {m["id"]: m["title"] for m in forecast["markets"]}
+        self.assertRegex(titles["total_over"], r"^Тривоги у \d+\+ областях$")
+        self.assertEqual(len(files["results.json"]["nights"]), 10)
+        self.assertEqual([s["t"] for s in files["snapshots.json"]], [int(NOW.timestamp()) - 1800, int(NOW.timestamp())])
 
     def test_missing_live_data_degrades_gracefully(self):
         official = rows_for("oblast", range(6, 120, 3), FORECAST_REGIONS)

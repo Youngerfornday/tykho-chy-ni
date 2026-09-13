@@ -38,6 +38,8 @@ class History:
     official_until: datetime
     volunteer_until: datetime
     excluded: Tuple[Tuple[str, float], ...] = field(default_factory=tuple)
+    # Raw volunteer data for rejected regions: its silence still proves a quiet night.
+    volunteer_timelines: Mapping[str, Timeline] = field(default_factory=dict)
 
 
 def _parse_time(value: str) -> Optional[datetime]:
@@ -104,14 +106,17 @@ def merge_sources(
     anchors = nights_ending_before(official_until, AGREEMENT_NIGHTS)
     regions: Dict[str, RegionHistory] = {}
     excluded: List[Tuple[str, float]] = []
+    rejected: Dict[str, Timeline] = {}
     for region in FORECAST_REGIONS:
         official_rows = official.intervals.get(region, [])
         volunteer_rows = volunteer.intervals.get(region, [])
-        score = agreement(Timeline.from_intervals(official_rows), Timeline.from_intervals(volunteer_rows), anchors)
+        volunteer_timeline = Timeline.from_intervals(volunteer_rows)
+        score = agreement(Timeline.from_intervals(official_rows), volunteer_timeline, anchors)
         if score >= threshold:
             fresh = [iv for iv in volunteer_rows if iv[0] >= official_until]
             regions[region] = RegionHistory(Timeline.from_intervals(official_rows + fresh), volunteer_until)
         else:
             regions[region] = RegionHistory(Timeline.from_intervals(official_rows), official_until)
             excluded.append((region, round(score, 3)))
-    return History(regions, official_until, volunteer_until, tuple(excluded))
+            rejected[region] = volunteer_timeline
+    return History(regions, official_until, volunteer_until, tuple(excluded), rejected)

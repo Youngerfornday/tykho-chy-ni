@@ -2,7 +2,7 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  min-height: min(94svh, 860px);
+  min-height: min(82svh, 740px);
   display: grid;
   grid-template-rows: auto 1fr;
   background: var(--bg);
@@ -30,17 +30,19 @@
 }
 .wordmark__moon { color: var(--yellow); display: inline-flex; }
 
-.hero__stamp {
-  margin: 0; font: 500 0.8rem/1.3 var(--font-data); color: var(--muted); letter-spacing: 0.02em;
-}
+.hero__tools { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: flex-end; }
+.hero__stamp { margin: 0; font: 500 0.88rem/1.35 var(--font-ui); color: var(--muted); }
 .hero__stamp strong { color: var(--ink-2); font-weight: 700; }
 
-.hero__body { align-self: center; padding-bottom: clamp(140px, 22vh, 230px); }
+.hero__body { align-self: center; padding-bottom: clamp(120px, 18vh, 200px); }
 
-.hero__night {
-  margin: 0 0 0.9rem; color: var(--yellow-soft);
-  font: 600 clamp(0.95rem, 1.4vw, 1.1rem)/1.3 var(--font-ui);
+/* Skyline dissolves into the page instead of ending on a seam. */
+.hero::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 90px; z-index: -1;
+  background: linear-gradient(180deg, rgba(20, 25, 33, 0), var(--bg));
+  pointer-events: none;
 }
+
 
 .verdict {
   font: 800 clamp(2.9rem, 9vw, 6rem)/0.96 var(--font-display);
@@ -91,14 +93,21 @@
   background-repeat: no-repeat; background-position: right 14px center;
 }
 .picker__reset { background: transparent; cursor: pointer; }
+.picker__cta {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 10px 16px; border-radius: var(--radius);
+  background: var(--yellow); color: #141921; font-weight: 700; text-decoration: none;
+}
+.picker__cta:hover { background: var(--yellow-soft); color: #141921; }
 .picker__select:hover, .picker__reset:hover { border-color: var(--muted); }
 
 .hero__disclaimer { margin: 1.4rem 0 0; font-size: 0.85rem; color: var(--muted); max-width: 52ch; }
 
 @media (max-width: 720px) {
   .hero { min-height: auto; }
-  .hero::before { background: linear-gradient(180deg, rgba(20, 25, 33, 0.35) 0%, rgba(20, 25, 33, 0.82) 30%, rgba(20, 25, 33, 0.82) 62%, rgba(20, 25, 33, 0.1) 100%); }
-  .hero__body { padding-bottom: 200px; }
+  .hero::before { background: linear-gradient(180deg, rgba(20, 25, 33, 0.3) 0%, rgba(20, 25, 33, 0.78) 22%, rgba(20, 25, 33, 0.78) 58%, rgba(20, 25, 33, 0) 76%); }
+  .hero__body { padding-bottom: 230px; }
+  .hero__tools { justify-content: space-between; width: 100%; }
+  .strip__caption { flex-direction: column; gap: 2px; }
   .strip { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 5px; }
-  .hero__stamp { width: 100%; }
+
 }

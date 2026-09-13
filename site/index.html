@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="css/map.css">
   <link rel="stylesheet" href="css/board.css">
   <link rel="stylesheet" href="css/method.css">
+  <link rel="stylesheet" href="css/bet.css">
   <script type="module" src="js/main.js"></script>
 </head>
 <body>
@@ -33,17 +34,20 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     <div class="hero__art" id="art"></div>
     <div class="hero__bar wrap">
       <a class="wordmark" href="#top"><span class="wordmark__moon" id="wordmark-icon"></span>Тихо чи ні?</a>
-      <p class="hero__stamp" id="stamp">Завантаження прогнозу…</p>
+      <div class="hero__tools">
+        <p class="hero__stamp" id="stamp">Завантаження прогнозу…</p>
+        <button type="button" class="wallet" id="wallet-chip" aria-label="Мої ставки і баланс"></button>
+      </div>
     </div>
     <div class="hero__body wrap">
-      <p class="hero__night" id="night"></p>
       <h1 class="verdict" id="verdict" aria-live="polite">&nbsp;</h1>
       <p class="hero__lede" id="lede"></p>
-      <div class="strip" id="strip" aria-label="Шанс тривоги по областях"></div>
+      <div class="strip" id="strip" role="group" aria-label="Шанс тривоги по областях"></div>
       <div class="picker">
         <label class="picker__label" for="region-select">Моя область</label>
         <select id="region-select" class="picker__select"></select>
         <button type="button" class="picker__reset" id="region-reset" hidden>Вся Україна</button>
+        <a class="picker__cta" href="#board">Зробити ставку</a>
       </div>
       <p class="hero__disclaimer">Прогноз за історією тривог, не тривога. Слухайте сирени та офіційні застосунки.</p>
     </div>
@@ -71,7 +75,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
     <section class="board wrap" id="board" aria-labelledby="board-title">
       <h2 id="board-title">Лінія на ніч</h2>
-      <p class="section-sub">Умовні коефіцієнти: чесні 1/p, без маржі й без грошей. Так ймовірність простіше відчути.</p>
+      <p class="section-sub">Ставки на віртуальні фішки: 1000 на старт і щоденне поповнення. Коефіцієнти чесні, 1/p без маржі. Експрес рахуємо за реальними спільними ночами, бо тривоги пов'язані між собою.</p>
       <div class="board__table" id="board-rows"></div>
     </section>
 
@@ -89,5 +93,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     <p class="foot__warn">Це статистичний прогноз, а не повідомлення про тривогу. Реальний стан: <a href="https://map.ukrainealarm.com/" rel="noopener">офіційна карта тривог</a> і застосунок «Повітряна тривога».</p>
     <p class="foot__meta" id="foot-meta">Код і методика: <a href="https://github.com/Youngerfornday/tykho-chy-ni" rel="noopener">github.com/Youngerfornday/tykho-chy-ni</a></p>
   </footer>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <div class="slip" id="slip" data-open="false" data-empty="true"></div>
 </body>
 </html>

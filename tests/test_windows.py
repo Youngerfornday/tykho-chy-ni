@@ -1,7 +1,7 @@
 import unittest
 from datetime import date, datetime, timedelta
 
-from forecast.windows import KYIV, analog_window, night_window
+from forecast.windows import KYIV, analog_window, fixed_window, night_window
 
 
 def kyiv(y, m, d, hh, mm=0):
@@ -47,6 +47,14 @@ class NightWindowTest(unittest.TestCase):
     def test_rejects_naive_datetime(self):
         with self.assertRaises(ValueError):
             night_window(datetime(2026, 9, 13, 22, 40))
+
+
+class FixedWindowTest(unittest.TestCase):
+    def test_full_night_bounds_regardless_of_clock(self):
+        w = fixed_window(date(2026, 9, 13))
+        self.assertEqual(w.start, kyiv(2026, 9, 13, 23))
+        self.assertEqual(w.late_start, kyiv(2026, 9, 14, 1))
+        self.assertEqual(w.end, kyiv(2026, 9, 14, 7))
 
 
 class AnalogWindowTest(unittest.TestCase):

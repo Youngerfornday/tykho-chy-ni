@@ -18,7 +18,7 @@ const C = {
   front: '#0e1218', muted: '#989ba0', gold: '#E6B20E', light: '#E5CD40', red: '#D45B50', pale: '#EEE9E3',
 };
 
-const MOON = { cx: 880, cy: 104, r: 30 };
+const MOON = { cx: 1180, cy: 96, r: 30 };
 
 const FRONT_BLOCKS = [
   [0, 64, 62, 'flat'], [60, 46, 88, 'antenna'], [104, 86, 50, 'pitched'], [188, 56, 98, 'stepped'],

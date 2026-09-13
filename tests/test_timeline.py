@@ -46,6 +46,11 @@ class TimelineQueryTest(unittest.TestCase):
         self.assertEqual(self.tl.end_of_active(t(6)), t(7))
         self.assertIsNone(self.tl.end_of_active(t(3)))
 
+    def test_overlapping_returns_clipped_intervals(self):
+        self.assertEqual(self.tl.overlapping(t(1, 30), t(6)), ((t(1, 30), t(2)), (t(5), t(6))))
+        self.assertEqual(self.tl.overlapping(t(2), t(5)), ())
+        self.assertEqual(self.tl.overlapping(t(0), t(9)), ((t(1), t(2)), (t(5), t(7))))
+
     def test_clipped_hides_future(self):
         clipped = self.tl.clipped(t(6))
         self.assertEqual(clipped.intervals(), ((t(1), t(2)), (t(5), t(6))))

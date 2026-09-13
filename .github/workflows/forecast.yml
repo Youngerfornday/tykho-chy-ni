@@ -25,10 +25,12 @@ jobs:
           python-version: "3.12"
       - name: Unit tests
         run: python -m unittest discover -s tests
+      - name: JS unit tests
+        run: if [ -d tests/js ]; then node --test "tests/js/*.test.mjs"; fi
       - name: Build forecast
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python -m forecast.build --out site/data/forecast.json
+        run: python -m forecast.build --out site/data/forecast.json --snapshots-url https://youngerfornday.github.io/tykho-chy-ni/data/snapshots.json
       - uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: site

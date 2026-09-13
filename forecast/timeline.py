@@ -53,6 +53,14 @@ class Timeline:
             return self._ends[i]
         return None
 
+    def overlapping(self, start: datetime, end: datetime) -> Tuple[Interval, ...]:
+        """Intervals intersecting [start, end), clipped to it."""
+        first = bisect_right(self._ends, start)
+        last = bisect_left(self._starts, end)
+        return tuple(
+            (max(s, start), min(e, end)) for s, e in zip(self._starts[first:last], self._ends[first:last])
+        )
+
     def clipped(self, horizon: datetime) -> "Timeline":
         """Timeline as it was known at `horizon`: later starts dropped, open ends cut."""
         cut = bisect_left(self._starts, horizon)

@@ -1,4 +1,4 @@
-.mapsec { padding-block: clamp(48px, 8vw, 96px) clamp(40px, 6vw, 72px); }
+.mapsec { padding-block: 40px clamp(40px, 6vw, 72px); }
 .mapsec__head { margin-bottom: 28px; }
 
 .mapframe {
@@ -22,6 +22,7 @@
   transition: fill 700ms var(--ease-out), filter 200ms ease;
 }
 .map__region:hover, .map__region:focus-visible { filter: brightness(1.14); outline: none; }
+.map__focus { fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-dasharray: 6 4; pointer-events: none; }
 .map__region--perm { fill: url(#perm-hatch); cursor: default; }
 
 .map__pulse {
@@ -34,21 +35,24 @@
 
 .map__labels text { text-anchor: middle; pointer-events: none; fill: var(--ink); }
 .map__name { font: 600 13px var(--font-ui); letter-spacing: 0.01em; }
-.map__value { font: 700 12.5px var(--font-data); fill-opacity: 0.86; }
+.map__value { font: 700 12.5px var(--font-data); }
 .map__label--dark { fill: #141921 !important; }
 .map__label--city { text-anchor: end !important; paint-order: stroke; stroke: rgba(20, 25, 33, 0.85); stroke-width: 3.5px; stroke-linejoin: round; }
 .map--compact .map__label--city.map__value { display: none; }
 
 .map--compact .map__name { display: none; }
-.map--compact .map__value { font-size: 25px; transform-box: fill-box; }
+.map--compact .map__value { font-size: 34px; }
 
 .map__watermark { pointer-events: none; }
 .map__stamp { font: 800 26px var(--font-display); fill: var(--muted); letter-spacing: 0.04em; }
 .map__stamp-sub { font: 600 20px var(--font-ui); fill: var(--muted); }
 .map__stamp-time { font: 500 18px var(--font-ui); fill: var(--muted); fill-opacity: 0.85; }
-.map--compact .map__stamp { font-size: 34px; transform: translateY(-14px); }
-.map--compact .map__stamp-sub { font-size: 25px; }
-.map--compact .map__stamp-time { font-size: 21px; transform: translateY(8px); }
+.map--compact .map__stamp, .map--compact .map__stamp-sub, .map--compact .map__stamp-time { fill: var(--ink-2); }
+.map__stamp-time--short { display: none; }
+.map--compact .map__stamp { font-size: 44px; transform: translateY(-40px); }
+.map--compact .map__stamp-sub { font-size: 30px; transform: translateY(-6px); }
+.map--compact .map__stamp-time { display: none; }
+.map--compact .map__stamp-time--short { display: inline; font-size: 28px; transform: translateY(30px); }
 
 .mapframe__pill {
   position: absolute; top: 0; right: 0;
@@ -112,12 +116,19 @@
 .tooltip strong { color: var(--ink); font-weight: 700; }
 .tooltip__big { font: 700 1.4rem/1.1 var(--font-data); color: var(--ink); }
 .tooltip__muted { color: var(--muted); }
+.tooltip__range { white-space: nowrap; }
 
 .regions-table { margin-top: 28px; }
 .regions-table summary {
-  cursor: pointer; display: inline-flex; align-items: center; min-height: 44px;
-  font-weight: 600; color: var(--ink-2);
+  cursor: pointer; display: inline-flex; align-items: center; gap: 8px; min-height: 44px;
+  font-weight: 600; color: var(--ink-2); list-style: none;
 }
+.regions-table summary::-webkit-details-marker { display: none; }
+.regions-table summary::before {
+  content: ""; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg); transition: transform 200ms var(--ease-out);
+}
+.regions-table[open] summary::before { transform: rotate(45deg); }
 .regions-table summary:hover { color: var(--ink); }
 .table-scroll { overflow-x: auto; margin-top: 12px; }
 .table-scroll table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 0.92rem; }
@@ -128,10 +139,13 @@
 .table-scroll tr { cursor: pointer; }
 .table-scroll tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
 .table-scroll .name { display: flex; align-items: center; gap: 10px; }
+.table-scroll .bets-cell { display: flex; gap: 6px; cursor: default; }
+.table-scroll table { min-width: 720px; }
 
 @media (max-width: 1100px) {
   .mapframe { grid-template-columns: minmax(0, 1fr); }
-  .mapframe__panel { grid-column: 1; grid-row: 3; position: static; }
+  .mapframe__panel { grid-column: 1; grid-row: 2; position: static; }
+  .mapframe__legend { grid-row: 3; }
 }
 
 @media (max-width: 720px) {

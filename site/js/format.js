@@ -60,7 +60,7 @@ export function regionVerdict(region) {
 }
 
 export function shortName(name) {
-  if (name === 'м. Київ') return 'Київ';
+  if (name === 'м. Київ') return 'м. Київ';
   if (name === 'Автономна Республіка Крим') return 'Крим';
   return name.replace(' область', '');
 }

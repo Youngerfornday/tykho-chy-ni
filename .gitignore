@@ -5,3 +5,5 @@ __pycache__/
 .playwright-mcp/
 .impeccable/review/
 site/data/forecast.json
+site/data/results.json
+site/data/snapshots.json

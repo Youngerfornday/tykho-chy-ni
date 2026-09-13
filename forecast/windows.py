@@ -52,6 +52,11 @@ def analog_window(anchor: date, clock: time) -> NightWindow:
     return NightWindow(anchor, feature_time, start, late_start, end, in_window)
 
 
+def fixed_window(anchor: date) -> NightWindow:
+    """The full 23:00-07:00 night for `anchor`, independent of the current clock."""
+    return analog_window(anchor, time(22, 0))
+
+
 def night_window(now: datetime) -> NightWindow:
     if now.tzinfo is None:
         raise ValueError("now must be timezone-aware")

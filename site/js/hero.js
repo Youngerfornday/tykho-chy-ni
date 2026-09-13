@@ -42,7 +42,7 @@ function renderStrip(data, selected, onSelect) {
     on: { click: () => onSelect(name === selected ? null : name) },
   }));
   const caption = h('p', { class: 'strip__caption' },
-    h('span', { text: 'Від найтихішої області' }), h('span', { text: 'до найгучнішої · крапка = тривога зараз' }));
+    h('span', { text: 'Від найтихішої області до найгучнішої' }), h('span', { text: 'Крапка: тривога зараз' }));
   replaceChildren($('strip'), cells, caption);
 }
 
@@ -64,14 +64,13 @@ export function renderHero(data, selected, onSelect) {
   const verdict = region ? regionVerdict(region) : nationalVerdict(data.national.intensity);
   const tone = region ? BINS[binIndex(region.status === 'ongoing' ? 1 : region.p)].color : BINS[verdict.tone].color;
 
-  $('night').textContent = nightTitle(data.window.anchor);
   replaceChildren($('verdict'),
     region ? h('span', { class: 'verdict__region', text: selected }) : null,
     verdict.text,
     h('span', { class: 'verdict__chip', style: { '--tone': tone }, 'aria-hidden': 'true' }));
   replaceChildren($('lede'), region ? regionLede(selected, region) : nationalLede(data));
   replaceChildren($('stamp'),
-    'Станом на ', h('strong', { text: clock(data.generated_at) }), ' · оновлення кожні 30 хв');
+    `Прогноз: ${nightTitle(data.window.anchor).toLowerCase()} · станом на `, h('strong', { text: clock(data.generated_at) }), ' · оновлення кожні 30 хв');
   renderStrip(data, selected, onSelect);
   renderPicker(data, selected, onSelect);
 }

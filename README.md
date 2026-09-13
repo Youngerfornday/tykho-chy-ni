@@ -14,6 +14,10 @@ Live page: https://youngerfornday.github.io/tykho-chy-ni/
 - Every build runs a rolling 60-night backtest and publishes the Brier score against the base rate, plus a reliability diagram.
 - Odds on the page are fair `1/p`, no margin, no money.
 
+## Betting game
+
+A play-money prediction game sits on top of the forecast: virtual chips only, no real money, payouts or prizes, state kept in the visitor's browser. Each build publishes a `line` block (analog-night outcome matrix, so accumulators are priced from joint outcomes rather than multiplied singles), `results.json` (alerts observed per night, used to settle bets) and `snapshots.json` (live alert states carried between builds). Contract and settlement rules: [docs/betting.md](docs/betting.md).
+
 ## Run locally
 
 ```sh

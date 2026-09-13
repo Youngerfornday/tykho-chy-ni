@@ -19,4 +19,13 @@ export const ICONS = Object.freeze({
   clock: icon('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
   west: icon('<circle cx="12" cy="12" r="9"/><path d="M12 4.5v1.5M19.5 12H18M12 19.5V18"/><path d="M5.5 12l6.5-2.8v5.6z"/>'),
   arrowLeft: icon('<path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/>'),
+  chips: icon('<ellipse cx="12" cy="7" rx="7" ry="3"/><path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7"/><path d="M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/>'),
+  plus: icon('<path d="M12 5v14M5 12h14"/>'),
+  minus: icon('<path d="M5 12h14"/>'),
+  up: icon('<path d="M12 19V5"/><path d="M6 11l6-6 6 6"/>'),
+  down: icon('<path d="M12 5v14"/><path d="M18 13l-6 6-6-6"/>'),
+  lock: icon('<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
+  check: icon('<path d="M5 12.5l4.5 4.5L19 7"/>'),
+  chevron: icon('<path d="M6 9l6 6 6-6"/>'),
+  trash: icon('<path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/>'),
 });
