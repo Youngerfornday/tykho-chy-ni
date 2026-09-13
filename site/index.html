@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Тихо чи ні?</title>
+  <meta name="description" content="Статистичний прогноз: чи буде тривога цієї ночі в кожній області України. Не офіційна тривога.">
+  <meta name="theme-color" content="#141921">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23141921'/%3E%3Cpath d='M20.5 7.5a9 9 0 1 0 4 15.2A10 10 0 0 1 20.5 7.5z' fill='%23E6B20E'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/art.css">
+  <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/map.css">
+  <link rel="stylesheet" href="css/board.css">
+  <link rel="stylesheet" href="css/method.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+<!--
+THESIS: The night's answer in the alert map's own dark language: a forecast you read like the map you already watch, never a dashboard of stat tiles, and never mistaken for the real map.
+OWN-WORLD: #141921 night ground, #2A2D31 panels with 1px #3f4246 rules, oblasts in #3B4351 turning brown, yellow, red and dark red by chance; square legend chips; Unbounded verdicts, Onest text, mono split-flap odds.
+STORY: The visitor gets a verdict for the country, finds their oblast on the map, feels the odds on the board, then checks how honest the numbers are.
+FIRST VIEWPORT: Full-bleed night over Kyiv (moon, searchlights, cat). Top-left wordmark and snapshot time. Left column: giant verdict, one sentence of numbers, 24-square region strip, region picker. The map's top edge peeks below.
+FORM: brief-pinned world (alert map), no roll; signature interaction: split-flap odds roll; region selection syncs hero, map panel and table.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+-->
+  <a class="skip" href="#map">До карти</a>
+  <div id="stale" class="stale" role="status" hidden></div>
+
+  <header class="hero" id="top">
+    <div class="hero__art" id="art"></div>
+    <div class="hero__bar wrap">
+      <a class="wordmark" href="#top"><span class="wordmark__moon" id="wordmark-icon"></span>Тихо чи ні?</a>
+      <p class="hero__stamp" id="stamp">Завантаження прогнозу…</p>
+    </div>
+    <div class="hero__body wrap">
+      <p class="hero__night" id="night"></p>
+      <h1 class="verdict" id="verdict" aria-live="polite">&nbsp;</h1>
+      <p class="hero__lede" id="lede"></p>
+      <div class="strip" id="strip" aria-label="Шанс тривоги по областях"></div>
+      <div class="picker">
+        <label class="picker__label" for="region-select">Моя область</label>
+        <select id="region-select" class="picker__select"></select>
+        <button type="button" class="picker__reset" id="region-reset" hidden>Вся Україна</button>
+      </div>
+      <p class="hero__disclaimer">Прогноз за історією тривог, не тривога. Слухайте сирени та офіційні застосунки.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="mapsec" id="map" aria-labelledby="map-title">
+      <div class="wrap mapsec__head">
+        <h2 id="map-title">Карта шансів на ніч</h2>
+        <p class="section-sub" id="map-sub">Ймовірність хоча б однієї тривоги в області з 23:00 до 07:00.</p>
+      </div>
+      <div class="mapframe wrap">
+        <div class="mapframe__canvas" id="map-canvas">
+          <div class="mapframe__pill" id="map-pill"></div>
+          <div class="tooltip" id="map-tooltip" role="tooltip" hidden></div>
+        </div>
+        <div class="mapframe__legend" id="map-legend"></div>
+        <aside class="mapframe__panel" id="region-panel" aria-live="polite"></aside>
+      </div>
+      <details class="wrap regions-table">
+        <summary>Усі області таблицею</summary>
+        <div class="table-scroll" id="region-table"></div>
+      </details>
+    </section>
+
+    <section class="board wrap" id="board" aria-labelledby="board-title">
+      <h2 id="board-title">Лінія на ніч</h2>
+      <p class="section-sub">Умовні коефіцієнти: чесні 1/p, без маржі й без грошей. Так ймовірність простіше відчути.</p>
+      <div class="board__table" id="board-rows"></div>
+    </section>
+
+    <section class="method wrap" id="method" aria-labelledby="method-title">
+      <h2 id="method-title">Як ми рахуємо</h2>
+      <div class="method__grid">
+        <div class="method__text" id="method-text"></div>
+        <figure class="calib" id="calibration"></figure>
+      </div>
+      <div class="method__notes" id="method-notes"></div>
+    </section>
+  </main>
+
+  <footer class="foot wrap">
+    <p class="foot__warn">Це статистичний прогноз, а не повідомлення про тривогу. Реальний стан: <a href="https://map.ukrainealarm.com/" rel="noopener">офіційна карта тривог</a> і застосунок «Повітряна тривога».</p>
+    <p class="foot__meta" id="foot-meta">Код і методика: <a href="https://github.com/Youngerfornday/tykho-chy-ni" rel="noopener">github.com/Youngerfornday/tykho-chy-ni</a></p>
+  </footer>
+</body>
+</html>

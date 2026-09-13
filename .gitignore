@@ -1,0 +1,7 @@
+.cache/
+__pycache__/
+*.pyc
+.DS_Store
+.playwright-mcp/
+.impeccable/review/
+site/data/forecast.json
