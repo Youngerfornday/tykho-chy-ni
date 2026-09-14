@@ -42,7 +42,7 @@ function buildTabs(navigate) {
     e.preventDefault();
     const next = tabs[(index + delta + tabs.length) % tabs.length];
     next.focus();
-    navigate(ROUTES[tabs.indexOf(next)]);
+    navigate(ROUTES[tabs.indexOf(next)], { focus: false });
   });
   return tabs;
 }

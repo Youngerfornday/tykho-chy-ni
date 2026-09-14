@@ -1,7 +1,7 @@
 // Betting state container: wallet, slip, line and results, with persistence and settlement.
 
 import { settleBet } from './settle.js';
-import { acceptOdds, addSelection, buildTickets, emptySlip, quoteSlip, removeSelection, setMode, setStake } from './slip.js';
+import { acceptOdds, addSelection, buildTickets, emptySlip, parseSlip, quoteSlip, removeSelection, serializeSlip, setMode, setStake, SLIP_KEY } from './slip.js';
 import { applyGamification, createProfile, parseProfile, PROFILE_KEY, progressSnapshot } from './profile.js';
 import { applyDailyBonus, applySettlement, createWallet, kyivDay, parseWallet, placeBets, STORAGE_KEY } from './wallet.js';
 
@@ -29,10 +29,13 @@ export function createBetStore({ onEvent = () => {} } = {}) {
   const initial = storage ? parseWallet(storage.getItem(STORAGE_KEY), today) : createWallet(today);
   const bonus = applyDailyBonus(initial, today);
 
+  const saved = storage ? parseSlip(storage.getItem(SLIP_KEY)) : null;
+  let slipAnchor = saved?.anchor ?? null;
+
   let state = {
     wallet: bonus.wallet,
     profile: storage ? parseProfile(storage.getItem(PROFILE_KEY)) : createProfile(),
-    slip: emptySlip(),
+    slip: saved?.slip ?? emptySlip(),
     line: null,
     results: null,
     ctx: { regions: [], west: [] },
@@ -49,9 +52,15 @@ export function createBetStore({ onEvent = () => {} } = {}) {
     } catch { /* quota or privacy mode: keep in memory */ }
   };
   const emit = () => listeners.forEach((fn) => fn(state));
+  const persistSlip = () => {
+    if (!storage) return;
+    try { storage.setItem(SLIP_KEY, serializeSlip(state.slip, state.line?.anchor ?? slipAnchor)); } catch { /* keep in memory */ }
+  };
   const update = (patch, { save = false } = {}) => {
+    const slipChanged = 'slip' in patch && patch.slip !== state.slip;
     state = { ...state, ...patch };
     if (save) persist();
+    if (slipChanged) persistSlip();
     emit();
   };
 
@@ -77,6 +86,11 @@ export function createBetStore({ onEvent = () => {} } = {}) {
   persist();
   window.addEventListener('storage', (event) => {
     if (event.newValue == null) return;
+    if (event.key === SLIP_KEY) {
+      const other = parseSlip(event.newValue);
+      if (other && (!state.line || other.anchor === state.line.anchor)) { state = { ...state, slip: other.slip }; emit(); }
+      return;
+    }
     if (event.key === STORAGE_KEY) update({ wallet: parseWallet(event.newValue, kyivDay(Date.now())) });
     if (event.key === PROFILE_KEY) update({ profile: parseProfile(event.newValue) });
   });
@@ -88,7 +102,16 @@ export function createBetStore({ onEvent = () => {} } = {}) {
     bonusGranted: bonus.bonus,
 
     setData(forecast, results) {
-      update({ line: forecast.line || null, results: results || state.results, ctx: { regions: Object.keys(forecast.regions), west: forecast.west || [] } });
+      const line = forecast.line || null;
+      // A coupon saved for another night never carries over into tonight's line.
+      const staleSlip = line && slipAnchor && slipAnchor !== line.anchor && state.slip.selections.length;
+      slipAnchor = line?.anchor ?? slipAnchor;
+      update({
+        line,
+        results: results || state.results,
+        ctx: { regions: Object.keys(forecast.regions), west: forecast.west || [] },
+        ...(staleSlip ? { slip: { ...state.slip, selections: [] } } : {}),
+      });
       settle();
     },
     toggle(selection) {

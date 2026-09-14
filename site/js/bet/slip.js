@@ -7,6 +7,36 @@ export const MAX_LEGS = 6;
 export const MAX_SELECTIONS = 12;
 
 export const emptySlip = () => ({ selections: [], mode: 'single', stake: 100 });
+export const SLIP_KEY = 'tcn.slip.v1';
+
+const isSelection = (s) => s && typeof s.key === 'string' && (s.pick === 'yes' || s.pick === 'no')
+  && Number.isFinite(s.odds) && (s.line == null || Number.isFinite(s.line));
+
+export function serializeSlip(slip, anchor) {
+  return JSON.stringify({ version: 1, anchor, slip });
+}
+
+/** @returns {{ anchor: string|null, slip: object } | null} a clean slip, or null for unreadable input */
+export function parseSlip(raw) {
+  try {
+    const data = JSON.parse(raw);
+    if (!data || data.version !== 1 || !data.slip) return null;
+    const { selections, mode, stake } = data.slip;
+    const base = emptySlip();
+    return {
+      anchor: typeof data.anchor === 'string' ? data.anchor : null,
+      slip: {
+        selections: Array.isArray(selections)
+          ? selections.filter(isSelection).slice(0, MAX_SELECTIONS).map(({ key, pick, odds, line }) => ({ key, pick, odds, line: line ?? null }))
+          : [],
+        mode: mode === 'express' ? 'express' : 'single',
+        stake: Number.isInteger(stake) && stake > 0 ? stake : base.stake,
+      },
+    };
+  } catch {
+    return null;
+  }
+}
 
 export function addSelection(slip, selection) {
   const existing = slip.selections.find((s) => s.key === selection.key);

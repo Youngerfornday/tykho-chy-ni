@@ -6,11 +6,12 @@ import { ICONS } from '../icons.js';
 import { pct } from '../format.js';
 import { marketTitle, pickLabel } from './labels.js';
 import { quoteSelection } from './pricing.js';
-import { isSelected } from './slip.js';
+import { isSelected, lineState } from './slip.js';
 
 export function oddsButton(store, key, pick, { label, compact = false } = {}) {
   const { line, slip } = store.state;
-  const q = line ? quoteSelection(line, key, pick) : { suspended: true, odds: null, p: Number.NaN };
+  const closed = !lineState(line, Math.floor(Date.now() / 1000)).open;
+  const q = line && !closed ? quoteSelection(line, key, pick) : { suspended: true, odds: null, p: Number.NaN };
   const title = marketTitle(key, line?.total_line);
   const choice = label ?? pickLabel(key, pick, line?.total_line);
   const cls = `odds${compact ? ' odds--compact' : ''}`;

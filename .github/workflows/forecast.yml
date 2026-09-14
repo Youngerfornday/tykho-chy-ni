@@ -1,18 +1,18 @@
 name: forecast
 
+# GitHub throttles cron on young repos (observed: 2 runs in 8 hours instead of 16), so the
+# workflow re-arms itself after each deploy. Cron at off-peak minutes stays as the fallback
+# that restarts the chain if it ever breaks.
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "7,37 * * * *"
+    - cron: "22,52 * * * *"
   workflow_dispatch:
   push:
     branches: [main]
 
 permissions:
   contents: read
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
   build:
@@ -38,6 +38,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
     permissions:
       pages: write
       id-token: write
@@ -47,3 +50,27 @@ jobs:
     steps:
       - id: deploy
         uses: actions/deploy-pages@v5.0.1
+
+  rearm:
+    needs: deploy
+    if: ${{ always() && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      actions: write
+    steps:
+      - name: Wait, then start the next refresh unless another run is already active
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          SELF_ID: ${{ github.run_id }}
+        run: |
+          sleep 1500
+          active=$(gh run list --workflow forecast.yml --limit 20 --json databaseId,status \
+            --jq "[.[] | select(.databaseId != ${SELF_ID} and (.status | IN(\"queued\", \"in_progress\", \"waiting\", \"pending\", \"requested\")))] | length")
+          if [ "$active" -eq 0 ]; then
+            gh workflow run forecast.yml --ref main
+            echo "next refresh dispatched"
+          else
+            echo "another run is active ($active); it keeps the chain going"
+          fi

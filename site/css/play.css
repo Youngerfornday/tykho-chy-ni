@@ -288,7 +288,7 @@ body:not([data-input="key"]) .screen__title:focus-visible { outline: none; }
   .coupon__foot { margin-inline: -20px; padding-inline: 20px; background: var(--bg-deep); }
   .center .screen { padding: 22px 28px 40px; max-width: 980px; }
   .slot--missions { display: none; }
-  .featured { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .featured { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); }
   .mrow__text .meter { max-width: 220px; }
   .toasts { top: calc(var(--top-h) + 8px); right: calc(var(--side-w) + 16px); }
 }

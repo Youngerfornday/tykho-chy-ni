@@ -12,6 +12,7 @@ import { createCouponScreen } from './couponScreen.js';
 import { createBetsScreen } from './betsScreen.js';
 import { createProgressScreen } from './progressScreen.js';
 import { createRail } from './rail.js';
+import { isSelected, lineState } from '../bet/slip.js';
 import { emblemFor, mountShell } from './shell.js';
 
 const $ = (id) => document.getElementById(id);
@@ -21,6 +22,7 @@ const CELEBRATION = { won: 'win', achievement: 'achievement', levelUp: 'level' }
 
 function createRouter({ shell, rail, screens }) {
   let current = null;
+  let focusHeading = true;
   function apply({ focus = true } = {}) {
     const route = routeFromHash(window.location.hash);
     const visible = visibleScreens(route, desktopQuery.matches);
@@ -31,9 +33,13 @@ function createRouter({ shell, rail, screens }) {
     if (route === current) return;
     current = route;
     $('main').scrollTop = 0;
-    if (focus) $(`screen-${route}-title`)?.focus({ preventScroll: true });
+    const moveFocus = focus && focusHeading;
+    focusHeading = true;
+    if (moveFocus) $(`screen-${route}-title`)?.focus({ preventScroll: true });
   }
-  const navigate = (route) => {
+  // Arrow-key tab switching keeps focus on the tab (ARIA tabs); other navigation focuses the screen heading.
+  const navigate = (route, { focus = true } = {}) => {
+    focusHeading = focus;
     if (routeFromHash(window.location.hash) === route) { apply(); return; }
     window.location.hash = route;
   };
@@ -58,7 +64,7 @@ async function start() {
   let data;
   const screens = { line: $('screen-line'), coupon: $('screen-coupon'), bets: $('screen-bets'), progress: $('screen-progress') };
   let navigate = () => {};
-  const late = (route) => navigate(route);
+  const late = (route, options) => navigate(route, options);
   const line = createLineScreen(screens.line, store, { navigate: late });
   const coupon = createCouponScreen(screens.coupon, store, { navigate: late });
   const bets = createBetsScreen(screens.bets, store, { intensity: () => data?.national?.intensity ?? 0.3 });
@@ -104,15 +110,23 @@ async function start() {
   if (link.market && store.state.line) {
     const q = quoteSelection(store.state.line, link.market.key, link.market.pick);
     if (!q.suspended) {
-      store.toggle({ key: link.market.key, pick: link.market.pick, odds: q.odds, line: link.market.key === 'total_over' ? store.state.line.total_line : null });
+      if (!isSelected(store.state.slip, link.market.key, link.market.pick)) {
+        store.toggle({ key: link.market.key, pick: link.market.pick, odds: q.odds, line: link.market.key === 'total_over' ? store.state.line.total_line : null });
+      }
       navigate('coupon');
     }
   }
   if (link.region || link.market) window.history.replaceState(null, '', `${window.location.pathname}${window.location.hash}`);
 
   window.setInterval(() => shell.tick(nowSeconds()), 1000);
+  let lineOpen = lineState(store.state.line, nowSeconds()).open;
   window.setInterval(() => {
     line.setStale(staleMessage(data));
+    const open = lineState(store.state.line, nowSeconds()).open;
+    if (open !== lineOpen) {
+      lineOpen = open;
+      line.setData(data, staleMessage(data));
+    }
     store.settle();
     coupon.render(store.state);
   }, TICK_MS);

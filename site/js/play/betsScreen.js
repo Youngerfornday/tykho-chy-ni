@@ -19,8 +19,17 @@ function nightCard(night, progress, onShare) {
     'aria-label': `Поділитися підсумком: ${nightTitle(night.anchor)}`,
     on: { click: async () => {
       shareBtn.disabled = true;
-      try { await onShare(night, progress); } catch { /* user cancelled or share unavailable */ }
+      replaceChildren(shareBtn, icon(ICONS.share(16)), 'Готуємо картку…');
+      let label = 'Поділитися';
+      try {
+        const outcome = await onShare(night, progress);
+        if (outcome === 'downloaded') label = 'Картку збережено';
+      } catch {
+        label = 'Не вдалося. Спробуйте ще';
+      }
+      replaceChildren(shareBtn, icon(ICONS.share(16)), label);
       shareBtn.disabled = false;
+      if (label !== 'Поділитися') window.setTimeout(() => replaceChildren(shareBtn, icon(ICONS.share(16)), 'Поділитися'), 4000);
     } },
   }, icon(ICONS.share(16)), 'Поділитися');
   return h('li', { class: `night night--${tone}` },

@@ -24,7 +24,7 @@
 }
 
 .wordmark {
-  display: inline-flex; align-items: center; gap: 10px;
+  display: inline-flex; align-items: center; gap: 10px; min-height: 44px;
   font: 700 1.05rem/1 var(--font-display); letter-spacing: -0.01em;
   color: var(--ink); text-decoration: none;
 }
@@ -108,6 +108,6 @@
   .hero__body { padding-bottom: 230px; }
   .hero__tools { justify-content: space-between; width: 100%; }
   .strip__caption { flex-direction: column; gap: 2px; }
-  .strip { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 5px; }
+  .strip { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
 
 }

@@ -143,8 +143,13 @@ export async function shareNight(night, progress, intensity) {
   const blob = await renderShareCard(cardFromNight(night, progress, intensity));
   const file = new File([blob], `tykho-${night.anchor}.png`, { type: 'image/png' });
   if (navigator.canShare?.({ files: [file] })) {
-    await navigator.share({ files: [file], title: nightTitle(night.anchor) });
-    return 'shared';
+    try {
+      await navigator.share({ files: [file], title: nightTitle(night.anchor) });
+      return 'shared';
+    } catch (error) {
+      if (error?.name === 'AbortError') return 'cancelled';
+      // Safari rejects share() once the gesture expires during rendering: save the image instead.
+    }
   }
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');

@@ -84,3 +84,13 @@ test('placing and settling moves chips exactly once', () => {
   assert.equal(stats.won, 1);
   assert.equal(stats.lost, 1);
 });
+
+test('slip survives a reload through a validating parser', async () => {
+  const { parseSlip, serializeSlip } = await import('../../site/js/bet/slip.js');
+  const slip = { selections: [{ key: 'alarm|A', pick: 'yes', odds: 2, line: null }, { key: 'total_over', pick: 'no', odds: 1.9, line: 12.5 }], mode: 'express', stake: 150 };
+  const restored = parseSlip(serializeSlip(slip, '2026-09-14'));
+  assert.deepEqual(restored, { anchor: '2026-09-14', slip });
+  assert.equal(parseSlip('garbage'), null);
+  const dirty = JSON.stringify({ version: 1, anchor: '2026-09-14', slip: { selections: [{ key: 'alarm|A', pick: 'maybe', odds: 2 }, { key: 5 }, { key: 'west_quiet', pick: 'yes', odds: 'x' }], mode: 'turbo', stake: -3 } });
+  assert.deepEqual(parseSlip(dirty).slip, { selections: [], mode: 'single', stake: 100 });
+});
