@@ -28,4 +28,13 @@ export const ICONS = Object.freeze({
   check: icon('<path d="M5 12.5l4.5 4.5L19 7"/>'),
   chevron: icon('<path d="M6 9l6 6 6-6"/>'),
   trash: icon('<path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/>'),
+  list: icon('<path d="M8 6h13M8 12h13M8 18h13"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>'),
+  search: icon('<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.3-4.3"/>'),
+  share: icon('<path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M5 13v6a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-6"/>'),
+  flag: icon('<path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/>'),
+  star: icon('<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.9l-5.3 2.8 1.1-5.9-4.3-4.1 5.9-.8z"/>'),
+  progress: icon('<path d="M4 20h16"/><path d="M6 16V11M11 16V6M16 16V9M21 16V4" stroke-width="2"/>'),
+  reset: icon('<path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v5h5"/>'),
+  sparkle: icon('<path d="M12 4l1.8 5.2L19 11l-5.2 1.8L12 18l-1.8-5.2L5 11l5.2-1.8z"/><path d="M19 3v3M17.5 4.5h3"/>'),
+  target: icon('<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3.5v3M20.5 12h-3M12 20.5v-3M3.5 12h3"/>'),
 });

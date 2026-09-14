@@ -32,7 +32,10 @@ Viewed at night, often on a phone, frequently while real alerts are active. User
 - Default verdict is for all of Ukraine; regions are selected on the map (user decision).
 - Visual language follows the dark alert-map palette (user brief), but without its name, logo, font, domain or watermark; the map carries a visible "ПРОГНОЗ · не офіційна тривога" mark and a snapshot time.
 - Occupied regions with a standing alert (Luhansk, Crimea) are drawn but never forecast.
-- Betting framing is presentation only: fair odds 1/p, no money, no margin.
+- Play-money game (owner decision 2026-09-14) on a separate page `/play/`: virtual chips only (1000 start, daily top-up), no deposits, payouts or prizes; state in the visitor's browser. Singles and accumulators, live until 07:00, fair odds 1/p without margin, accumulators priced on joint analog nights. Rules: docs/betting.md.
+- Gamification rewards forecasting skill, not volume or risk, never late-night activity, never loss chasing; safety notes when a selected region is under alert (docs/gamification.md).
+- The forecast page stays answer-first; the game is linked from it, never the loudest control in the hero.
+- Win state uses green `#00B280` (from the alert map's own palette), only for won bets and unlocked rewards.
 - Data sources: Vadimkin/ukrainian-air-raid-sirens-dataset (official + volunteer), ubilling.net.ua live status. Volunteer data is rejected per region when it disagrees with official data.
 
 ## Evidence on Hand

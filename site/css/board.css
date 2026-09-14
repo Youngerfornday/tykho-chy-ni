@@ -1,15 +1,6 @@
 .board { padding-block: clamp(48px, 8vw, 104px); }
 
-.board__tabs { margin-top: 28px; display: flex; gap: 6px; flex-wrap: wrap; }
-.board__tab {
-  min-height: 44px; padding: 10px 16px; border-radius: 999px; cursor: pointer;
-  font: 600 0.95rem/1 var(--font-ui); color: var(--ink-2);
-  background: transparent; border: 1px solid var(--line);
-}
-.board__tab:hover { color: var(--ink); border-color: var(--muted); }
-.board__tab[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-
-.board__status { display: flex; align-items: center; gap: 8px; margin: 16px 0 0; font-size: 0.9rem; color: var(--muted); }
+.board__status { display: flex; align-items: center; gap: 8px; margin: 24px 0 0; font-size: 0.9rem; color: var(--muted); }
 .board__status--closed { color: var(--yellow-soft); }
 
 .board__table {
@@ -42,6 +33,19 @@
 .board__note { font-size: 0.83rem; color: var(--muted); }
 .board__odds { display: flex; gap: 8px; }
 .board__empty { margin-top: 24px; color: var(--muted); }
+
+.board__cta { margin-top: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; }
+.board__missions { display: grid; gap: 8px; }
+.board__missions-title { font: 700 0.95rem/1.2 var(--font-display); }
+.board__missions ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--ink-2); font-size: 0.9rem; }
+.board__missions li { display: inline-flex; align-items: center; gap: 8px; }
+.chip--mission { width: 10px; height: 10px; background: var(--yellow); }
+.board__play {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 12px 20px; border-radius: 10px;
+  background: var(--yellow); color: #141921; font-weight: 700; text-decoration: none;
+}
+.board__play:hover { background: var(--yellow-soft); color: #141921; }
+a.odds { text-decoration: none; }
 
 /* Odds button: flat tile in the map's panel material. */
 .odds {

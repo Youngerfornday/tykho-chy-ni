@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Гра · Тихо чи ні?</title>
+  <meta name="description" content="Гра на віртуальні фішки: прогнозуйте, у яких областях цієї ночі буде тривога. Без грошей, без призів. Прогноз, не тривога.">
+  <meta name="theme-color" content="#141921">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Тихо чи ні?">
+  <meta property="og:title" content="Гра «Тихо чи ні?»: прогноз ночі на віртуальні фішки">
+  <meta property="og:description" content="Завдання ночі, рівні, досягнення й чесні коефіцієнти. Без грошей і призів. Прогноз, не офіційна тривога.">
+  <meta property="og:url" content="https://youngerfornday.github.io/tykho-chy-ni/play/">
+  <meta property="og:image" content="https://youngerfornday.github.io/tykho-chy-ni/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Тихо чи ні?">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23141921'/%3E%3Cpath d='M20.5 7.5a9 9 0 1 0 4 15.2A10 10 0 0 1 20.5 7.5z' fill='%23E6B20E'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/art.css">
+  <link rel="stylesheet" href="../css/map.css">
+  <link rel="stylesheet" href="../css/bet.css">
+  <link rel="stylesheet" href="../css/play.css">
+  <script type="module" src="../js/play/main.js"></script>
+</head>
+<body class="play">
+<!--
+THESIS: A phone-first betting shell in the alert map's own dark language: the night sky stays overhead, the line reads like the map's table, chips and odds are mono, and every reward stays in the sky (shooting star, the rooftop cat), never fireworks.
+OWN-WORLD: #141921 ground, #2A2D31 panels with 1px #3f4246 rules, square legend chips, bin colors only for chance meters, yellow for odds and the primary action, green for wins only.
+STORY: Check the line is open, pick markets from the missions or the filters, build the coupon, place, sleep; come back to settled bets, a night summary to share, and a level that grows with skill.
+FIRST VIEWPORT (390): top bar with balance and level, the sky strip with the countdown, the missions of the night, the four featured markets.
+FORM: brief-pinned world, no roll; signature interaction: odds tiles turning yellow as they enter the coupon, coupon count in the tab bar.
+-->
+  <a class="skip" href="#screen-line-title">До лінії</a>
+  <div class="app" id="app" data-route="line">
+    <header class="top">
+      <a class="top__back" href="../"><span id="back-icon"></span><span>Прогноз</span></a>
+      <h1 class="wordmark"><span class="wordmark__moon" id="wordmark-icon"></span><span class="wordmark__text">Гра</span></h1>
+      <button type="button" class="balance" id="balance" aria-label="Баланс фішок. Відкрити мої ставки"></button>
+      <button type="button" class="level" id="level" aria-label="Рівень. Відкрити прогрес"></button>
+    </header>
+
+    <div class="sky" id="sky" data-open="false">
+      <div class="sky__art" id="sky-art"></div>
+      <p class="sky__status" role="status">
+        <span class="sky__label" id="line-label">Завантаження лінії…</span>
+        <span class="sky__clock" id="line-clock" hidden></span>
+      </p>
+      <span class="sky__mark" aria-hidden="true">ПРОГНОЗ · не офіційна тривога</span>
+    </div>
+
+    <div class="body">
+      <aside class="rail" id="rail" aria-label="Рівень і завдання"></aside>
+      <main class="main" id="main">
+        <div class="center">
+          <section class="screen screen--line" id="screen-line" aria-labelledby="screen-line-title"></section>
+          <section class="screen screen--progress" id="screen-progress" aria-labelledby="screen-progress-title" hidden></section>
+        </div>
+        <div class="side">
+          <div class="sidetabs" id="sidetabs" role="tablist" aria-label="Купон і ставки"></div>
+          <section class="screen screen--coupon" id="screen-coupon" aria-labelledby="screen-coupon-title" hidden></section>
+          <section class="screen screen--bets" id="screen-bets" aria-labelledby="screen-bets-title" hidden></section>
+        </div>
+      </main>
+    </div>
+
+    <nav class="tabbar" aria-label="Розділи гри">
+      <div class="tabbar__list" id="tabbar-list" role="tablist" aria-label="Розділи"></div>
+    </nav>
+  </div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+</body>
+</html>

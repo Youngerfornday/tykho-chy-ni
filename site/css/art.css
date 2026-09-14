@@ -88,3 +88,59 @@
     transition: none !important;
   }
 }
+
+.night-scene .ns-shooting-star {
+  transform: translate(var(--ns-shoot-x), var(--ns-shoot-y));
+  animation: ns-shoot var(--ns-shoot-duration, 1.2s) cubic-bezier(.2, .65, .25, 1) var(--ns-shoot-delay, 0s) both;
+}
+
+.night-scene .ns-moon-halo-pulse {
+  animation: ns-halo-pulse 1.4s ease-in-out both;
+}
+
+.night-scene .ns-celebrate-wag {
+  animation: ns-celebrate-wag .82s ease-in-out both;
+}
+
+.night-scene .ns-eyes-open.ns-celebrate-eyes {
+  opacity: 1 !important;
+  animation: ns-celebrate-eyes .95s ease-in-out both;
+}
+
+.night-scene .ns-eyes-closed.ns-celebrate-eyes-closed {
+  opacity: 0 !important;
+}
+
+@keyframes ns-shoot {
+  0% { opacity: 0; transform: translate(var(--ns-shoot-x), var(--ns-shoot-y)); }
+  12% { opacity: 1; }
+  86% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(var(--ns-shoot-x) + 760px), calc(var(--ns-shoot-y) - 220px)); }
+}
+
+@keyframes ns-halo-pulse {
+  0%, 100% { opacity: 0; transform: scale(.7); transform-origin: 1180px 96px; }
+  35% { opacity: .95; }
+  60% { opacity: .5; }
+}
+
+@keyframes ns-celebrate-wag {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(20deg); }
+  52% { transform: rotate(-17deg); }
+  78% { transform: rotate(14deg); }
+}
+
+@keyframes ns-celebrate-eyes {
+  0%, 100% { opacity: 0; transform: scaleY(.25); }
+  18%, 82% { opacity: 1; transform: scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .night-scene .ns-shooting-star,
+  .night-scene .ns-moon-halo-pulse,
+  .night-scene .ns-celebrate-wag,
+  .night-scene .ns-eyes-open.ns-celebrate-eyes {
+    animation: none !important;
+  }
+}

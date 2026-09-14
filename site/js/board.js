@@ -1,26 +1,22 @@
+// Read-only teaser of tonight's line on the forecast page; every price links into /play/.
+
 import { h, icon, replaceChildren } from './dom.js';
 import { ICONS } from './icons.js';
-import { pct, shortName } from './format.js';
-import { marketTitle } from './bet/labels.js';
-import { oddsButton } from './bet/oddsButton.js';
-import { lineState } from './bet/slip.js';
+import { pct } from './format.js';
+import { marketTitle, pickLabel } from './bet/labels.js';
+import { missionsFor } from './bet/missions.js';
 import { quoteSelection } from './bet/pricing.js';
+import { lineState } from './bet/slip.js';
 
+const TEASER_KEYS = ['west_quiet', 'total_over', 'alarm|м. Київ', 'alarm|Київська область'];
 const DIGITS = '0123456789';
 const ROLL_MS = 560;
 const ROW_STAGGER_MS = 90;
 const TICK_MS = 45;
-const MAIN_KEYS = ['west_quiet', 'total_over', 'alarm|м. Київ', 'quiet_late|м. Київ', 'alarm|Київська область', 'alarm|Одеська область', 'alarm|Львівська область'];
-const TABS = [
-  { id: 'main', text: 'Головні' },
-  { id: 'alarm', text: 'Тривога по областях' },
-  { id: 'quiet_late', text: 'Тихо з 01:00' },
-];
 
-let activeTab = 'main';
 let rolled = false;
-
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+export const playLink = (params = '') => `play/${params}`;
 
 function roll(row, delay) {
   const values = [...row.querySelectorAll('.odds__value')].filter((el) => /\d/.test(el.textContent));
@@ -39,53 +35,55 @@ function roll(row, delay) {
   }, delay);
 }
 
-function note(store, key, data) {
-  const q = quoteSelection(store.state.line, key, 'yes');
-  const region = key.includes('|') ? data.regions[key.split('|')[1]] : null;
-  if (q.suspended) return region?.status === 'ongoing' ? 'Тривога вже триває, прийом закрито' : 'Результат майже визначений, прийом закрито';
-  const kind = key.split('|')[0];
-  const base = kind === 'total_over' ? 'Скільки областей почують тривогу' : kind === 'west_quiet' ? 'Жодної тривоги у 7 західних областях' : kind === 'quiet_late' ? 'Жодної тривоги у другій половині ночі' : 'Хоча б одна тривога в області';
-  return `${base} · шанс «так» ${pct(q.p)} · ≈${Math.round(q.nEff)} схожих ночей`;
+function priceLink(line, key, pick) {
+  const q = quoteSelection(line, key, pick);
+  const choice = pickLabel(key, pick, line.total_line);
+  const title = marketTitle(key, line.total_line);
+  if (q.suspended) {
+    return h('span', { class: 'odds odds--off', role: 'img', 'aria-label': `${title}, ${choice}: прийом закрито` },
+      h('span', { class: 'odds__label', text: choice }), h('span', { class: 'odds__value' }, icon(ICONS.lock(14))));
+  }
+  const params = `?market=${encodeURIComponent(key)}&pick=${pick}`;
+  return h('a', { class: 'odds', href: playLink(params), 'aria-label': `${title}, ${choice}: коефіцієнт ${q.odds.toFixed(2)}. Відкрити в грі` },
+    h('span', { class: 'odds__label', text: choice }), h('span', { class: 'odds__value', text: q.odds.toFixed(2) }));
 }
 
-function row(store, key, data) {
-  const line = store.state.line;
+function row(line, key) {
+  const q = quoteSelection(line, key, 'yes');
   return h('div', { class: 'board__row', role: 'row' },
     h('div', { class: 'board__market', role: 'cell' },
       h('span', { class: 'board__title', text: marketTitle(key, line.total_line) }),
-      h('span', { class: 'board__note', text: note(store, key, data) })),
-    h('div', { class: 'board__odds', role: 'cell' }, oddsButton(store, key, 'yes'), oddsButton(store, key, 'no')));
+      h('span', { class: 'board__note', text: q.suspended ? 'Результат майже визначений, прийом закрито' : `Шанс «так» ${pct(q.p)} · ≈${Math.round(q.nEff)} схожих ночей` })),
+    h('div', { class: 'board__odds', role: 'cell' }, priceLink(line, key, 'yes'), priceLink(line, key, 'no')));
 }
 
-function keysFor(tab, data) {
-  if (tab === 'main') return MAIN_KEYS;
-  return Object.keys(data.regions).sort((a, b) => shortName(a).localeCompare(shortName(b), 'uk')).map((r) => `${tab}|${r}`);
-}
-
-export function renderBoard(target, store, data) {
-  const line = store.state.line;
+export function renderBoard(target, data) {
+  const { line } = data;
   if (!line) {
     replaceChildren(target, h('p', { class: 'board__empty', text: 'Лінія оновлюється. Спробуйте за кілька хвилин.' }));
     return;
   }
   const state = lineState(line, Math.floor(Date.now() / 1000));
-  const tabs = h('div', { class: 'board__tabs', role: 'tablist', 'aria-label': 'Ринки' },
-    TABS.map((t) => h('button', {
-      type: 'button', role: 'tab', class: 'board__tab', 'aria-selected': String(activeTab === t.id),
-      on: { click: () => { activeTab = t.id; renderBoard(target, store, data); } },
-    }, t.text)));
-  const status = h('p', { class: `board__status${state.open ? '' : ' board__status--closed'}` },
-    icon(state.open ? ICONS.clock(16) : ICONS.lock(16)),
-    state.open ? 'Прийом відкритий до 07:00. Ставка рахує лише події після її розміщення.' : state.reason);
-  const rows = keysFor(activeTab, data).map((key) => row(store, key, data));
-  const table = h('div', { class: `board__table${activeTab === 'main' ? '' : ' board__table--dense'}`, role: 'table', 'aria-label': 'Коефіцієнти на ніч' },
-    h('div', { class: 'board__row board__row--head', role: 'row' },
-      h('span', { role: 'columnheader', text: 'Подія до 07:00' }),
-      h('span', { role: 'columnheader', class: 'board__head-odds', text: 'Так · Ні' })),
-    rows);
-  replaceChildren(target, tabs, status, table);
+  const rows = TEASER_KEYS.map((key) => row(line, key));
+  const missions = missionsFor(line.anchor);
 
-  if (rolled || activeTab !== 'main' || reducedMotion() || !('IntersectionObserver' in window)) return;
+  replaceChildren(target,
+    h('p', { class: `board__status${state.open ? '' : ' board__status--closed'}` },
+      icon(state.open ? ICONS.clock(16) : ICONS.lock(16)),
+      state.open ? 'Прийом відкритий до 07:00. Ставка рахує лише події після її розміщення.' : state.reason),
+    h('div', { class: 'board__table', role: 'table', 'aria-label': 'Головні коефіцієнти на ніч' },
+      h('div', { class: 'board__row board__row--head', role: 'row' },
+        h('span', { role: 'columnheader', text: 'Подія до 07:00' }),
+        h('span', { role: 'columnheader', class: 'board__head-odds', text: 'Так · Ні' })),
+      rows),
+    h('div', { class: 'board__cta' },
+      h('div', { class: 'board__missions' },
+        h('span', { class: 'board__missions-title', text: 'Завдання цієї ночі' }),
+        h('ul', null, missions.map((m) => h('li', null, h('span', { class: 'chip chip--mission', 'aria-hidden': 'true' }), `${m.title} · +${m.reward}`)))),
+      h('a', { class: 'board__play', href: playLink() }, icon(ICONS.ticket(20)), 'Відкрити гру: 24 області, експреси, рівні')));
+
+  if (rolled || reducedMotion() || !('IntersectionObserver' in window)) return;
+  const table = target.querySelector('.board__table');
   const observer = new IntersectionObserver((entries) => {
     if (!entries.some((e) => e.isIntersecting)) return;
     rolled = true;

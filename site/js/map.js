@@ -84,7 +84,9 @@ export function createMap(mapData, { canvas, tooltip, onSelect }) {
   });
 
   new ResizeObserver(([entry]) => {
-    svg.classList.toggle('map--compact', entry.contentRect.width < COMPACT_WIDTH);
+    const width = entry.contentRect.width || 1;
+    svg.classList.toggle('map--compact', width < COMPACT_WIDTH);
+    svg.style.setProperty('--k', (w / width).toFixed(3));
   }).observe(canvas);
   canvas.prepend(svg);
 
@@ -122,7 +124,7 @@ export function renderPill(target, data) {
   const chips = BINS.map((bin, i) => ({ bin, i, count: counts[i] })).reverse().filter((c) => c.count > 0)
     .map(({ bin, count }) => h('span', { class: 'pill__item', title: bin.label },
       h('span', { class: 'chip', style: { background: bin.color } }), h('span', { text: String(count) })));
-  replaceChildren(target, h('span', { class: 'pill__title', text: 'Прогноз · області:' }), chips);
+  replaceChildren(target, h('span', { class: 'pill__title' }, 'Прогноз', h('span', { class: 'pill__long', text: ' · області' }), ':'), chips);
 }
 
 export function renderLegend(target) {

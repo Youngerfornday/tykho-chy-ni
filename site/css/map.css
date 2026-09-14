@@ -41,7 +41,7 @@
 .map--compact .map__label--city.map__value { display: none; }
 
 .map--compact .map__name { display: none; }
-.map--compact .map__value { font-size: 34px; }
+.map--compact .map__value { font-size: calc(12px * var(--k, 2.7)); }
 
 .map__watermark { pointer-events: none; }
 .map__stamp { font: 800 26px var(--font-display); fill: var(--muted); letter-spacing: 0.04em; }
@@ -49,10 +49,10 @@
 .map__stamp-time { font: 500 18px var(--font-ui); fill: var(--muted); fill-opacity: 0.85; }
 .map--compact .map__stamp, .map--compact .map__stamp-sub, .map--compact .map__stamp-time { fill: var(--ink-2); }
 .map__stamp-time--short { display: none; }
-.map--compact .map__stamp { font-size: 44px; transform: translateY(-40px); }
-.map--compact .map__stamp-sub { font-size: 30px; transform: translateY(-6px); }
+.map--compact .map__stamp { font-size: calc(15px * var(--k, 2.7)); transform: translateY(-40px); }
+.map--compact .map__stamp-sub { font-size: calc(10.5px * var(--k, 2.7)); transform: translateY(-6px); }
 .map--compact .map__stamp-time { display: none; }
-.map--compact .map__stamp-time--short { display: inline; font-size: 28px; transform: translateY(30px); }
+.map--compact .map__stamp-time--short { display: inline; font-size: calc(10px * var(--k, 2.7)); transform: translateY(30px); }
 
 .mapframe__pill {
   position: absolute; top: 0; right: 0;
@@ -87,6 +87,15 @@
   background: transparent; border: 0; border-radius: 8px; color: var(--muted); cursor: pointer;
 }
 .panel__close:hover { color: var(--ink); background: rgba(255, 255, 255, 0.05); }
+.panel__play {
+  margin-top: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-deep);
+  color: var(--ink); text-decoration: none;
+}
+.panel__play:hover { border-color: var(--yellow); color: var(--ink); }
+.panel__play span { display: grid; gap: 2px; }
+.panel__play small { color: var(--muted); font: 600 0.8rem/1.3 var(--font-data); }
+.panel__play .icon { color: var(--yellow); }
 .panel__verdict { display: flex; align-items: center; gap: 8px; margin: 6px 0 0; font-weight: 600; color: var(--ink-2); }
 .panel__verdict .chip { background: var(--tone); }
 .panel__big { margin: 16px 0 10px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
@@ -139,8 +148,7 @@
 .table-scroll tr { cursor: pointer; }
 .table-scroll tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
 .table-scroll .name { display: flex; align-items: center; gap: 10px; }
-.table-scroll .bets-cell { display: flex; gap: 6px; cursor: default; }
-.table-scroll table { min-width: 720px; }
+
 
 @media (max-width: 1100px) {
   .mapframe { grid-template-columns: minmax(0, 1fr); }
@@ -152,4 +160,5 @@
   .mapframe__pill { position: static; margin-top: 12px; width: fit-content; max-width: 100%; }
   .mapframe { gap: 16px; }
   .mapframe__legend ul { grid-template-columns: 1fr; }
+  .pill__long { display: none; }
 }

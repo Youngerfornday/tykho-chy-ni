@@ -1,7 +1,7 @@
 import { h, icon, replaceChildren } from './dom.js';
 import { BINS, binIndex, pct, range, regionVerdict, shortName } from './format.js';
 import { ICONS } from './icons.js';
-import { oddsButton } from './bet/oddsButton.js';
+import { quoteSelection } from './bet/pricing.js';
 
 function scale(region) {
   const bands = BINS.map((bin, i) => {
@@ -21,22 +21,25 @@ function row(label, value) {
   return value == null ? null : h('div', { class: 'facts__row' }, h('dt', { text: label }), h('dd', { text: value }));
 }
 
-function betBlock(store, region) {
-  if (!store?.state.line) return null;
-  const pair = (key) => h('div', { class: 'board__odds' }, oddsButton(store, key, 'yes', { compact: false }), oddsButton(store, key, 'no'));
-  return h('div', { class: 'panel__bets' },
-    h('h4', { text: 'Ставки на область' }),
-    h('div', { class: 'panel__bet' }, h('span', { text: 'Тривога до 07:00' }), pair(`alarm|${region}`)),
-    h('div', { class: 'panel__bet' }, h('span', { text: 'Тихо з 01:00 до 07:00' }), pair(`quiet_late|${region}`)));
+function betBlock(line, region) {
+  if (!line) return null;
+  const odds = (key, pick) => {
+    const q = quoteSelection(line, key, pick);
+    return q.suspended ? '—' : q.odds.toFixed(2);
+  };
+  const key = `alarm|${region}`;
+  return h('a', { class: 'panel__play', href: `play/?market=${encodeURIComponent(key)}&pick=yes` },
+    h('span', null, h('b', { text: 'Зробити прогноз у грі' }), h('small', { text: `Тривога до 07:00 · так ${odds(key, 'yes')} · ні ${odds(key, 'no')}` })),
+    icon(ICONS.ticket(20)));
 }
 
-export function renderRegionPanel(target, data, selected, onSelect, store) {
+export function renderRegionPanel(target, data, selected, onSelect) {
   if (!selected) {
     const loud = Object.entries(data.regions).filter(([, r]) => r.p >= 0.7 && r.status !== 'ongoing').length;
     replaceChildren(target,
       h('div', { class: 'panel__hint' },
         icon(ICONS.pin(22), 'panel__icon'),
-        h('p', { text: 'Торкніться області на карті, щоб побачити її шанси, діапазон і як зазвичай буває цієї пори.' }),
+        h('p', { text: 'Оберіть область на карті, щоб побачити її шанси, діапазон і як зазвичай буває цієї пори.' }),
         h('p', { class: 'panel__muted', text: `Поки тихо, але висока ймовірність тривоги: ${loud} ${loud === 1 ? 'область' : 'областей'}.` })));
     return;
   }
@@ -57,5 +60,5 @@ export function renderRegionPanel(target, data, selected, onSelect, store) {
       row('Тихо з 01:00 до 07:00', pct(region.p_quiet_late)),
       region.active_now ? row('Відбій протягом години', pct(region.p_clear_1h)) : null,
       row('Схожих ночей в основі', `≈${Math.round(region.n_eff)}`)),
-    betBlock(store, selected));
+    betBlock(data.line, selected));
 }

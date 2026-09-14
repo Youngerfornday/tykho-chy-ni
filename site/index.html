@@ -6,6 +6,17 @@
   <title>Тихо чи ні?</title>
   <meta name="description" content="Статистичний прогноз: чи буде тривога цієї ночі в кожній області України. Не офіційна тривога.">
   <meta name="theme-color" content="#141921">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Тихо чи ні?">
+  <meta property="og:title" content="Тихо чи ні? Прогноз тривог на ніч">
+  <meta property="og:description" content="Статистичний шанс тривоги до 07:00 у кожній області та гра на віртуальні фішки. Це прогноз, не офіційна тривога.">
+  <meta property="og:url" content="https://youngerfornday.github.io/tykho-chy-ni/">
+  <meta property="og:image" content="https://youngerfornday.github.io/tykho-chy-ni/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
   <meta name="color-scheme" content="dark">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23141921'/%3E%3Cpath d='M20.5 7.5a9 9 0 1 0 4 15.2A10 10 0 0 1 20.5 7.5z' fill='%23E6B20E'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/fonts.css">
@@ -15,7 +26,6 @@
   <link rel="stylesheet" href="css/map.css">
   <link rel="stylesheet" href="css/board.css">
   <link rel="stylesheet" href="css/method.css">
-  <link rel="stylesheet" href="css/bet.css">
   <script type="module" src="js/main.js"></script>
 </head>
 <body>
@@ -36,7 +46,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       <a class="wordmark" href="#top"><span class="wordmark__moon" id="wordmark-icon"></span>Тихо чи ні?</a>
       <div class="hero__tools">
         <p class="hero__stamp" id="stamp">Завантаження прогнозу…</p>
-        <button type="button" class="wallet" id="wallet-chip" aria-label="Мої ставки і баланс"></button>
       </div>
     </div>
     <div class="hero__body wrap">
@@ -47,7 +56,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <label class="picker__label" for="region-select">Моя область</label>
         <select id="region-select" class="picker__select"></select>
         <button type="button" class="picker__reset" id="region-reset" hidden>Вся Україна</button>
-        <a class="picker__cta" href="#board">Зробити ставку</a>
+        <a class="picker__cta" href="#board">Лінія на ніч</a>
       </div>
       <p class="hero__disclaimer">Прогноз за історією тривог, не тривога. Слухайте сирени та офіційні застосунки.</p>
     </div>
@@ -75,8 +84,8 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
     <section class="board wrap" id="board" aria-labelledby="board-title">
       <h2 id="board-title">Лінія на ніч</h2>
-      <p class="section-sub">Ставки на віртуальні фішки: 1000 на старт і щоденне поповнення. Коефіцієнти чесні, 1/p без маржі. Експрес рахуємо за реальними спільними ночами, бо тривоги пов'язані між собою.</p>
-      <div class="board__table" id="board-rows"></div>
+      <p class="section-sub">Гра на віртуальні фішки: 1000 на старт і щоденне поповнення, завдання ночі, рівні й досягнення. Коефіцієнти чесні, 1/p без маржі. Експрес рахуємо за реальними спільними ночами, бо тривоги пов'язані між собою.</p>
+      <div id="board-rows"></div>
     </section>
 
     <section class="method wrap" id="method" aria-labelledby="method-title">
@@ -93,7 +102,5 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     <p class="foot__warn">Це статистичний прогноз, а не повідомлення про тривогу. Реальний стан: <a href="https://map.ukrainealarm.com/" rel="noopener">офіційна карта тривог</a> і застосунок «Повітряна тривога».</p>
     <p class="foot__meta" id="foot-meta">Код і методика: <a href="https://github.com/Youngerfornday/tykho-chy-ni" rel="noopener">github.com/Youngerfornday/tykho-chy-ni</a></p>
   </footer>
-  <div class="toasts" id="toasts" aria-live="polite"></div>
-  <div class="slip" id="slip" data-open="false" data-empty="true"></div>
 </body>
 </html>

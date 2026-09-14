@@ -1,0 +1,16 @@
+{
+  "name": "Тихо чи ні? Прогноз і гра",
+  "short_name": "Тихо чи ні?",
+  "description": "Статистичний прогноз нічних тривог і гра на віртуальні фішки. Не офіційна тривога.",
+  "lang": "uk",
+  "start_url": "./play/",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#141921",
+  "theme_color": "#141921",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

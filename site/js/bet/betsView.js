@@ -1,10 +1,8 @@
 // "Мої ставки": stats, filter and bet cards with per-leg progress.
 
-import { h, replaceChildren } from '../dom.js';
+import { h } from '../dom.js';
 import { chips, marketTitle, pickLabel, placedWhen, STATUS_LABEL } from './labels.js';
 import { walletStats } from './wallet.js';
-
-let resetArmed = false;
 
 function badge(bet) {
   const profit = bet.payout - bet.stake;
@@ -12,7 +10,7 @@ function badge(bet) {
   return h('span', { class: `badge badge--${bet.status}`, text });
 }
 
-function card(bet) {
+export function betCard(bet) {
   const legStatus = bet.legStatus || bet.legs.map(() => 'open');
   const kind = bet.kind === 'express' ? `Експрес · ${bet.legs.length} події` : 'Ординар';
   const money = bet.status === 'pending'
@@ -44,11 +42,6 @@ export function renderBets(store, state) {
   const stat = (label, value) => h('div', { class: 'stat' }, h('dt', { text: label }), h('dd', { text: value }));
   const filter = (id, text) => h('button', { type: 'button', role: 'radio', class: 'seg__opt', 'aria-checked': String(view.filter === id), on: { click: () => store.setFilter(id) } }, text);
 
-  const resetBtn = h('button', {
-    type: 'button', class: `linkbtn${resetArmed ? ' linkbtn--danger' : ''}`,
-    on: { click: () => { if (resetArmed) { resetArmed = false; store.reset(); } else { resetArmed = true; replaceChildren(resetBtn, 'Точно? Натисніть ще раз, щоб стерти історію'); } } },
-  }, 'Почати з нуля');
-
   return [
     h('dl', { class: 'stats' },
       stat('Баланс', chips(wallet.balance)),
@@ -58,9 +51,8 @@ export function renderBets(store, state) {
     h('div', { class: 'seg', role: 'radiogroup', 'aria-label': 'Фільтр ставок' },
       filter('active', `Активні · ${active.length}`), filter('settled', `Розраховані · ${settled.length}`)),
     list.length
-      ? h('ul', { class: 'bets' }, list.map(card))
+      ? h('ul', { class: 'bets' }, list.map(betCard))
       : h('p', { class: 'slip__empty-text', text: view.filter === 'active' ? 'Активних ставок немає.' : 'Ще нічого не розраховано. Результати з\'являються вночі й після ранкового оновлення даних.' }),
     state.persistent ? null : h('p', { class: 'slip__warn', text: 'Браузер не зберігає дані: ставки зникнуть після закриття сторінки.' }),
-    resetBtn,
   ];
 }

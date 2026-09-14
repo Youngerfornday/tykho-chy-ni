@@ -212,7 +212,7 @@ function buildCat(id) {
     el('ellipse', { cx: -3, cy: -31, rx: 1.7, ry: 1.3 }), el('ellipse', { cx: 3, cy: -31, rx: 1.7, ry: 1.3 }),
   ]);
   const eyes = el('g', { transform: at }, [eyesClosed, eyesOpen]);
-  return { tail, eyes, eyesClosed, eyesOpen, body: CAT_BODY.map((d) => ({ d, transform: at })) };
+  return { tail, tailWag: tail.firstElementChild, eyes, eyesClosed, eyesOpen, body: CAT_BODY.map((d) => ({ d, transform: at })) };
 }
 
 function buildWindows(blocks, { seed, probability, opacityRange, flickerShare, size }) {
@@ -269,10 +269,26 @@ function applyIntensity(refs, value) {
   refs.eyesClosed.style.opacity = awake ? '0' : '1';
 }
 
+function buildShootingStar(id, delay = 0) {
+  return withVars(el('g', { class: 'ns-shooting-star' }, [
+    el('path', { d: 'M0 0L184 -62L158 -43Z', fill: C.light, 'fill-opacity': 0.22 }),
+    el('path', { d: 'M0 0L184 -62', fill: 'none', stroke: C.pale, 'stroke-width': 1.4, 'stroke-linecap': 'round' }),
+    el('circle', { cx: 184, cy: -62, r: 4.5, fill: C.light, 'fill-opacity': 0.5, filter: `url(#${id}-soft)` }),
+    el('circle', { cx: 184, cy: -62, r: 2.1, fill: C.pale }),
+  ]), {
+    '--ns-shoot-delay': `${delay}s`, '--ns-shoot-x': '220px', '--ns-shoot-y': '270px',
+  });
+}
+
+function canCelebrate() {
+  return typeof window !== 'undefined'
+    && (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+
 /**
  * @param {HTMLElement} root
  * @param {{ date?: Date, intensity?: number }} options intensity is 0..1
- * @returns {{ setIntensity: (value: number) => void }}
+ * @returns {{ setIntensity: (value: number) => void, celebrate: (kind: 'win'|'achievement'|'level') => void }}
  */
 export function mountNightScene(root, { date, intensity } = {}) {
   const when = date instanceof Date && !Number.isNaN(date.getTime()) ? date : new Date();
@@ -317,5 +333,29 @@ export function mountNightScene(root, { date, intensity } = {}) {
   const refs = { beams, redTint, eyesOpen: cat.eyesOpen, eyesClosed: cat.eyesClosed };
   applyIntensity(refs, intensity);
   root.appendChild(svg);
-  return { setIntensity: (v) => applyIntensity(refs, v) };
+  const celebrate = (kind) => {
+    if (!canCelebrate() || !['win', 'achievement', 'level'].includes(kind)) return;
+    const stars = kind === 'level' ? [buildShootingStar(id), buildShootingStar(id, 0.24)] : [buildShootingStar(id)];
+    stars.forEach((star) => svg.appendChild(star));
+    const halo = kind === 'level' ? el('circle', {
+      class: 'ns-moon-halo-pulse', cx: MOON.cx, cy: MOON.cy, r: 55, fill: `url(#${id}-glow)`,
+    }) : null;
+    if (halo) svg.appendChild(halo);
+    if (kind === 'achievement') {
+      cat.tailWag.classList.add('ns-celebrate-wag');
+      cat.eyesOpen.classList.add('ns-celebrate-eyes');
+      cat.eyesClosed.classList.add('ns-celebrate-eyes-closed');
+    }
+    const duration = kind === 'level' ? 1800 : 1350;
+    window.setTimeout(() => {
+      stars.forEach((star) => star.remove());
+      halo?.remove();
+      if (kind === 'achievement') {
+        cat.tailWag.classList.remove('ns-celebrate-wag');
+        cat.eyesOpen.classList.remove('ns-celebrate-eyes');
+        cat.eyesClosed.classList.remove('ns-celebrate-eyes-closed');
+      }
+    }, duration);
+  };
+  return { setIntensity: (v) => applyIntensity(refs, v), celebrate };
 }

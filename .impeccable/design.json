@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-14T00:00:00Z",
+  "title": "Design System: Тихо чи ні?",
+  "extensions": {
+    "colorMeta": {
+      "yellow": { "role": "primary", "displayName": "Alert Yellow", "canonical": "#E6B20E", "tonalRamp": ["#483804", "#7f6208", "#b68d0b", "#edb70e", "#f4c942", "#f7d979", "#fae8b0", "#fef8e7"] },
+      "win-green": { "role": "secondary", "displayName": "Win Green", "canonical": "#00B280", "tonalRamp": ["#004c37", "#008761", "#00c18b", "#00fbb5", "#37ffc7", "#71ffd7", "#abffe7", "#e5fff8"] },
+      "red": { "role": "tertiary", "displayName": "Alarm Red", "canonical": "#D45B50", "tonalRamp": ["#3d130f", "#6c211b", "#9b3026", "#ca3e32", "#d7685e", "#e3948d", "#eec0bc", "#faeceb"] },
+      "panel": { "role": "neutral", "displayName": "Panel", "canonical": "#2A2D31", "tonalRamp": ["#232629", "#3e4349", "#595f68", "#747c87", "#939aa3", "#b2b7bd", "#d2d5d8", "#f1f2f3"] },
+      "bg": { "role": "neutral", "displayName": "Night Ground", "canonical": "#141921", "tonalRamp": ["#1d2430", "#334054", "#495b78", "#5f779d", "#8295b3", "#a7b4c9", "#cbd3df", "#eff2f5"] },
+      "region": { "role": "neutral", "displayName": "Region / Bin 0", "canonical": "#3B4351", "tonalRamp": ["#20252c", "#39414e", "#515c70", "#6a7891", "#8b97ab", "#adb5c3", "#cfd3dc", "#f0f2f4"] },
+      "bin-1": { "role": "tertiary", "displayName": "Bin 1 (Brown)", "canonical": "#8A6A45", "tonalRamp": ["#33271a", "#5a452d", "#816340", "#a88154", "#bc9d79", "#d0baa0", "#e3d6c7", "#f6f3ee"] },
+      "bin-4": { "role": "tertiary", "displayName": "Bin 4 (Dark Red)", "canonical": "#91322b", "tonalRamp": ["#3b1411", "#68241f", "#95332c", "#c24339", "#d16c64", "#df9791", "#ecc1be", "#f9eceb"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero verdict only — the single largest element on either surface." },
+      "headline": { "displayName": "Headline", "purpose": "Section h2s, panel titles, game screen titles, wordmarks." },
+      "body": { "displayName": "Body", "purpose": "Ledes, disclaimers, hints, notes; the default reading voice." },
+      "label": { "displayName": "Label / Mono", "purpose": "Odds, balance, countdown clock, map percentages, stat and badge counts — never prose." }
+    },
+    "shadows": [
+      { "name": "overlay", "value": "0 10px 28px rgba(0, 0, 0, 0.45)", "purpose": "Map/table tooltip — the only card-style floating overlay." },
+      { "name": "toast", "value": "0 14px 34px -10px rgba(0, 0, 0, 0.75)", "purpose": "Toast notifications." },
+      { "name": "marker", "value": "0 1px 4px rgba(0, 0, 0, 0.5)", "purpose": "Map probability-band pin marker." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The one easing curve used across both surfaces (--ease-out): hover, color transitions, card/leg/toast entrances." },
+      { "name": "odds-split-flap", "value": "520ms roll, 45ms tick, digits randomized then settle", "purpose": "Signature interaction: an odds value that changed re-rolls its digits like a split-flap board. Skipped entirely under prefers-reduced-motion." },
+      { "name": "shooting-star", "value": "ns-shoot 1.2s cubic-bezier(.2,.65,.25,1)", "purpose": "Celebration for wins, achievements and level-ups in the night-sky art; reduced motion removes it, never substitutes a static flash." },
+      { "name": "map-pulse", "value": "2.6s ease-in-out infinite, stroke-opacity 0.85→0.25", "purpose": "Outlines a region currently under alert on the map." }
+    ],
+    "breakpoints": [
+      { "name": "wordmark-collapse", "value": "429px" },
+      { "name": "phone-max", "value": "599px" },
+      { "name": "map-compact", "value": "640px" },
+      { "name": "sky-art-crop", "value": "699px" },
+      { "name": "hero-stack", "value": "720px" },
+      { "name": "tablet", "value": "768px" },
+      { "name": "method-stack", "value": "860px" },
+      { "name": "play-desktop", "value": "1024px" },
+      { "name": "map-panel-stack", "value": "1100px" },
+      { "name": "wide-desktop", "value": "1400px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one filled action color in the system — place bet, play the line.",
+      "html": "<button class=\"ds-btn ds-btn--primary\">Поставити 100 фішок</button>",
+      "css": ".ds-btn--primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid transparent; background: var(--yellow, #E6B20E); color: #141921; font: 700 1rem/1.1 var(--font-ui, sans-serif); cursor: pointer; transition: background-color 160ms var(--ease-out, ease); } .ds-btn--primary:hover { background: var(--yellow-soft, #E5CD40); } .ds-btn--primary:focus-visible { outline: 2px solid var(--yellow, #E6B20E); outline-offset: 3px; } .ds-btn--primary:disabled { background: var(--region, #3B4351); color: var(--ink-2, #c2c2c2); cursor: not-allowed; }"
+    },
+    {
+      "name": "Odds Tile",
+      "kind": "button",
+      "refersTo": "odds-tile",
+      "description": "Signature interactive unit shared by the forecast board and the betting coupon; turns yellow when selected.",
+      "html": "<button class=\"ds-odds\" aria-pressed=\"false\"><span class=\"ds-odds__label\">ТАК</span><span class=\"ds-odds__value\">2.14</span></button>",
+      "css": ".ds-odds { display: grid; justify-items: center; align-content: center; gap: 4px; min-width: 84px; min-height: 56px; padding: 6px 12px; background: var(--panel, #2A2D31); border: 1px solid var(--line, #3f4246); border-radius: 8px; color: var(--ink, #EEE9E3); cursor: pointer; transition: background-color 160ms var(--ease-out, ease), border-color 160ms var(--ease-out, ease), transform 120ms var(--ease-out, ease); } .ds-odds:hover { border-color: var(--muted, #989ba0); background: #30343a; } .ds-odds:active { transform: translateY(1px); } .ds-odds__label { font: 600 0.7rem/1 var(--font-ui, sans-serif); letter-spacing: 0.06em; color: var(--muted, #989ba0); text-transform: uppercase; } .ds-odds__value { font: 700 1.12rem/1 var(--font-data, monospace); color: var(--yellow-soft, #E5CD40); letter-spacing: -0.01em; } .ds-odds[aria-pressed=\"true\"] { background: var(--yellow, #E6B20E); border-color: var(--yellow, #E6B20E); } .ds-odds[aria-pressed=\"true\"] .ds-odds__label, .ds-odds[aria-pressed=\"true\"] .ds-odds__value { color: #141921; }"
+    },
+    {
+      "name": "Legend Chip",
+      "kind": "chip",
+      "refersTo": null,
+      "description": "Square 3px-radius swatch for any bin/category legend row — the system's only chip shape.",
+      "html": "<li class=\"ds-legend-row\"><span class=\"ds-chip\" style=\"background: var(--bin-2, #E6B20E)\"></span><span>Ймовірна тривога (40–70%)</span></li>",
+      "css": ".ds-legend-row { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--ink-2, #c2c2c2); list-style: none; } .ds-chip { display: inline-block; width: 14px; height: 14px; border-radius: 3px; flex: none; }"
+    },
+    {
+      "name": "Mission Card",
+      "kind": "card",
+      "refersTo": null,
+      "description": "Nightly mission tile: index, reward, title, progress hint; done state dims title and tints the border green.",
+      "html": "<div class=\"ds-mission\"><div class=\"ds-mission__head\"><span class=\"ds-mission__index\">1</span><span class=\"ds-mission__reward\">+50</span></div><p class=\"ds-mission__title\">Прогноз до 23:00</p><p class=\"ds-mission__hint\">Поставте до початку вікна</p></div>",
+      "css": ".ds-mission { padding: 12px 14px; background: var(--panel, #2A2D31); border: 1px solid var(--line, #3f4246); border-radius: 12px; display: grid; gap: 4px; transition: border-color 200ms var(--ease-out, ease); } .ds-mission--done { border-color: rgba(0, 178, 128, 0.55); } .ds-mission__head { display: flex; align-items: center; gap: 8px; font: 600 0.78rem/1 var(--font-data, monospace); color: var(--muted, #989ba0); } .ds-mission__index { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 4px; background: var(--bg-deep, #0f131a); border: 1px solid var(--line, #3f4246); color: var(--ink-2, #c2c2c2); } .ds-mission__reward { color: var(--yellow-soft, #E5CD40); } .ds-mission__title { margin: 4px 0 0; font: 700 1rem/1.25 var(--font-ui, sans-serif); color: var(--ink, #EEE9E3); } .ds-mission__hint { margin: 0; font-size: 0.85rem; color: var(--muted, #989ba0); }"
+    },
+    {
+      "name": "Achievement Badge",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Medallion badge: gold ring and glyph when unlocked, muted ring and lock glyph when locked. Rendered as inline SVG in the real app; simplified div version shown here.",
+      "html": "<div class=\"ds-ach\"><div class=\"ds-ach__art ds-ach__art--on\"><svg viewBox=\"0 0 64 64\" width=\"56\" height=\"56\" aria-hidden=\"true\"><circle cx=\"32\" cy=\"32\" r=\"30\" fill=\"#2A2D31\" stroke=\"#E6B20E\" stroke-width=\"2\"/><circle cx=\"32\" cy=\"32\" r=\"25.5\" fill=\"none\" stroke=\"#3f4246\"/><circle cx=\"32\" cy=\"32\" r=\"10\" fill=\"#E5CD40\"/></svg></div><p class=\"ds-ach__title\">Перший прогноз</p><p class=\"ds-ach__reward\">+100</p></div>",
+      "css": ".ds-ach { display: grid; justify-items: center; gap: 4px; padding: 14px 10px 12px; background: var(--panel, #2A2D31); border: 1px solid var(--line, #3f4246); border-radius: 12px; text-align: center; } .ds-ach:not(.ds-ach--on) .ds-ach__art { opacity: 0.55; } .ds-ach__title { margin-top: 4px; font: 700 0.85rem/1.2 var(--font-ui, sans-serif); color: var(--ink, #EEE9E3); } .ds-ach__reward { font: 600 0.75rem/1 var(--font-data, monospace); color: var(--yellow-soft, #E5CD40); }"
+    },
+    {
+      "name": "Toast",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Non-blocking notification; a 3px left bar encodes tone (won=green, lost=red, info/bonus=yellow, neutral=muted). Max 2 visible at once.",
+      "html": "<div class=\"ds-toast ds-toast--won\"><div class=\"ds-toast__text\"><strong>Ставка зіграла: +240</strong><span>Аларм – М. Київ</span></div></div>",
+      "css": ".ds-toast { display: grid; grid-template-columns: 12px 1fr; column-gap: 10px; align-items: start; padding: 12px 14px; background: var(--panel, #2A2D31); border: 1px solid var(--line, #3f4246); border-radius: 10px; box-shadow: 0 14px 34px -10px rgba(0,0,0,0.75); position: relative; } .ds-toast::before { content: \"\"; position: absolute; left: 14px; top: 15px; width: 12px; height: 12px; border-radius: 3px; background: var(--muted, #989ba0); } .ds-toast--won::before { background: #00B280; } .ds-toast--lost::before { background: var(--red, #D45B50); } .ds-toast__text { display: grid; gap: 2px; padding-left: 22px; } .ds-toast strong { font-size: 0.95rem; color: var(--ink, #EEE9E3); } .ds-toast span { font-size: 0.85rem; color: var(--ink-2, #c2c2c2); }"
+    },
+    {
+      "name": "Tab Bar Tab",
+      "kind": "nav",
+      "refersTo": null,
+      "description": "Bottom tab (phone) / side tab (desktop ≥11024px); active tab gets yellow-soft text and a 2px yellow underline.",
+      "html": "<button class=\"ds-tab\" role=\"tab\" aria-selected=\"true\">Лінія</button>",
+      "css": ".ds-tab { position: relative; display: grid; justify-items: center; align-content: center; gap: 3px; min-height: 44px; border: 0; background: none; color: var(--muted, #989ba0); font: 600 0.7rem/1 var(--font-ui, sans-serif); cursor: pointer; transition: color 160ms var(--ease-out, ease); } .ds-tab[aria-selected=\"true\"] { color: var(--yellow-soft, #E5CD40); } .ds-tab[aria-selected=\"true\"]::after { content: \"\"; position: absolute; top: -1px; left: 22%; right: 22%; height: 2px; background: var(--yellow, #E6B20E); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Alert Map's Own Language",
+    "overview": "The system reads like the official Ukrainian air-raid alert map the audience already has open: a dark night ground, flat oblast shapes that shift from calm grey through brown, yellow, red to dark red by chance, square legend chips, and mono digits wherever a number is being measured. It borrows that visual grammar deliberately and only that — never the map's name, logo, font, domain or watermark. A single fixed label, \"ПРОГНОЗ · не офіційна тривога,\" is pinned onto every surface that could otherwise be mistaken for the real thing. The forecast page and the play-money betting app share one token set, one panel material and one type system; the game is a second room in the same house, phone-first where the forecast page is desktop-first. The page is built to be read fast, in the dark, often with a real alert active: the verdict is one giant headline before any chart, uncertainty is stated in the same sentence as the number, and the one accent color (yellow) is spent on odds and the primary action, not decoration. The game layers XP, missions, streaks and badges on top without ever raising the emotional volume past the forecast page's own register — rewards celebrate with a shooting star and the rooftop cat over Kyiv's skyline, never fireworks, and nothing about the celebration or its color scales with stake or risk.",
+    "keyCharacteristics": [
+      "Dark, cool, flat — one warm accent (yellow) and one meaning-locked accent (win green), both spent narrowly.",
+      "Three-typeface split by function, not decoration: display for verdicts and headings, UI sans for prose, mono strictly for numbers that are \"live\" (odds, balance, clocks, counts).",
+      "No cards floating on shadows: depth comes from tonal steps (bg → panel → panel-soft/bg-deep) and 1px rules, not elevation.",
+      "Square legend chips everywhere a category or bin needs a swatch; round pills are reserved for counts and status badges.",
+      "One motion signature per surface: the exponential ease-out on the forecast page, the split-flap odds roll and shooting-star celebration in the game — both fully disabled under reduced motion."
+    ],
+    "rules": [
+      { "name": "The Win-Green Rule", "body": "#00B280 and its soft variant appear only on a won bet, an unlocked achievement, or a profitable night. Never as a generic success color, hover state, or decoration.", "section": "colors" },
+      { "name": "The Bin/Odds Overlap Rule", "body": "--yellow and --bin-2 share the same hex (#E6B20E) by construction. The two roles never collide on one element; a new component must not casually reuse --bin-2 as an accent color — use --yellow by name for actions.", "section": "colors" },
+      { "name": "The Mono-Is-An-Instrument Rule", "body": "JetBrains Mono renders only live/measured numbers: odds, chip balance, the coupon total, the countdown clock, map percentages, table figures, badge/tab counts. Prose, labels and button text stay in Onest or Unbounded even when they contain a number.", "section": "typography" },
+      { "name": "The Flat-Panel Rule", "body": "Cards, tiles and panels never carry a shadow; a 1px --line border plus a tonal background step is the only separation device on a resting surface.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use the five-step bin scale (--bin-0…--bin-4) for anything encoding tonight's alert probability — region fills, strip cells, legend chips, pill counts — and nothing else.",
+      "Do keep #00B280/win-green scoped to won bets, unlocked achievements and profitable nights; it is not a general success/positive color.",
+      "Do spend --yellow/--yellow-soft on odds, the primary action and active/selected states — the one warm accent, kept narrow.",
+      "Do set JetBrains Mono only on live/measured numbers (odds, balance, clock, counts, map percentages); everything else stays in Onest or Unbounded.",
+      "Do build every panel/card as flat material — --panel + 1px --line, no drop shadow — and reserve the two shadow tokens for the tooltip and toast overlays only.",
+      "Do use square 3px-radius chips for legend/category swatches; reserve pill (999px) shapes for counters and status badges.",
+      "Do disable the split-flap odds roll, the shooting-star celebration, the map pulse ring and all entrance animations under prefers-reduced-motion: reduce.",
+      "Do keep the \"ПРОГНОЗ · не офіційна тривога\" mark visible on every surface that renders the night sky or the map.",
+      "Do give every interactive control a ≥44px touch target."
+    ],
+    "donts": [
+      "Don't add fireworks, confetti or explosion effects for wins or level-ups — celebrations stay inside the night-sky world.",
+      "Don't scale reward visuals, toast lifetime, or stake affordances with stake size or risk — the largest stake shortcut is fixed at 10% of balance.",
+      "Don't add hard drop shadows, bevels or skeuomorphic gloss anywhere; the material is flat panels and 1px rules, full stop.",
+      "Don't reuse the real alert map's name, logo, font, domain or watermark — the direction contracts call this a \"brief-pinned world,\" a borrowed visual language, not a copy.",
+      "Don't set Unbounded on body prose, hints or long-form copy; it is reserved for verdicts, headlines and short titles."
+    ]
+  }
+}

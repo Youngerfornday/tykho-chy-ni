@@ -2,6 +2,7 @@
 
 import { settleBet } from './settle.js';
 import { acceptOdds, addSelection, buildTickets, emptySlip, quoteSlip, removeSelection, setMode, setStake } from './slip.js';
+import { applyGamification, createProfile, parseProfile, PROFILE_KEY, progressSnapshot } from './profile.js';
 import { applyDailyBonus, applySettlement, createWallet, kyivDay, parseWallet, placeBets, STORAGE_KEY } from './wallet.js';
 
 const nowSeconds = () => Math.floor(Date.now() / 1000);
@@ -30,6 +31,7 @@ export function createBetStore({ onEvent = () => {} } = {}) {
 
   let state = {
     wallet: bonus.wallet,
+    profile: storage ? parseProfile(storage.getItem(PROFILE_KEY)) : createProfile(),
     slip: emptySlip(),
     line: null,
     results: null,
@@ -41,7 +43,10 @@ export function createBetStore({ onEvent = () => {} } = {}) {
 
   const persist = () => {
     if (!storage) return;
-    try { storage.setItem(STORAGE_KEY, JSON.stringify(state.wallet)); } catch { /* quota or privacy mode: keep in memory */ }
+    try {
+      storage.setItem(STORAGE_KEY, JSON.stringify(state.wallet));
+      storage.setItem(PROFILE_KEY, JSON.stringify(state.profile));
+    } catch { /* quota or privacy mode: keep in memory */ }
   };
   const emit = () => listeners.forEach((fn) => fn(state));
   const update = (patch, { save = false } = {}) => {
@@ -49,6 +54,13 @@ export function createBetStore({ onEvent = () => {} } = {}) {
     if (save) persist();
     emit();
   };
+
+  function gamify() {
+    const { wallet, profile, events } = applyGamification(state.wallet, state.profile, { ...state.ctx, now: nowSeconds() });
+    if (!events.length) return;
+    update({ wallet, profile }, { save: true });
+    events.forEach((event) => onEvent(event));
+  }
 
   function settle() {
     if (!state.results) return;
@@ -59,12 +71,14 @@ export function createBetStore({ onEvent = () => {} } = {}) {
     const bets = wallet.bets.map((b) => (legProgress.has(b.id) ? { ...b, legStatus: legProgress.get(b.id) } : b));
     update({ wallet: { ...wallet, bets } }, { save: events.length > 0 });
     events.forEach((event) => onEvent({ type: event.bet.status, bet: event.bet }));
+    gamify();
   }
 
   persist();
   window.addEventListener('storage', (event) => {
-    if (event.key !== STORAGE_KEY || event.newValue == null) return;
-    update({ wallet: parseWallet(event.newValue, kyivDay(Date.now())) });
+    if (event.newValue == null) return;
+    if (event.key === STORAGE_KEY) update({ wallet: parseWallet(event.newValue, kyivDay(Date.now())) });
+    if (event.key === PROFILE_KEY) update({ profile: parseProfile(event.newValue) });
   });
 
   const store = {
@@ -89,10 +103,11 @@ export function createBetStore({ onEvent = () => {} } = {}) {
     place() {
       const quote = store.quote();
       if (!quote.canPlace) return false;
-      const tickets = buildTickets(state.slip, quote, state.line, nowSeconds(), makeId);
+      const tickets = buildTickets(state.slip, quote, state.line, nowSeconds(), makeId, state.wallet.balance);
       const wallet = placeBets(state.wallet, tickets);
       update({ wallet, slip: { ...emptySlip(), mode: state.slip.mode, stake: state.slip.stake }, view: { ...state.view, receipt: { tickets } } }, { save: true });
       onEvent({ type: 'placed', tickets });
+      gamify();
       return true;
     },
     open(tab = state.view.tab) { update({ view: { ...state.view, open: true, tab } }); },
@@ -100,7 +115,9 @@ export function createBetStore({ onEvent = () => {} } = {}) {
     setTab(tab) { update({ view: { ...state.view, tab, receipt: null } }); },
     setFilter(filter) { update({ view: { ...state.view, filter } }); },
     dismissReceipt() { update({ view: { ...state.view, receipt: null } }); },
-    reset() { update({ wallet: createWallet(kyivDay(Date.now())), slip: emptySlip(), view: { ...state.view, receipt: null } }, { save: true }); },
+    reset() { update({ wallet: createWallet(kyivDay(Date.now())), profile: { ...createProfile(), introDismissed: state.profile.introDismissed }, slip: emptySlip(), view: { ...state.view, receipt: null } }, { save: true }); },
+    dismissIntro() { update({ profile: { ...state.profile, introDismissed: true } }, { save: true }); },
+    progress() { return progressSnapshot(state.wallet, state.profile, state.ctx, state.line?.anchor); },
     settle,
   };
   return store;

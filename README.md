@@ -18,16 +18,19 @@ Live page: https://youngerfornday.github.io/tykho-chy-ni/
 
 A play-money prediction game sits on top of the forecast: virtual chips only, no real money, payouts or prizes, state kept in the visitor's browser. Each build publishes a `line` block (analog-night outcome matrix, so accumulators are priced from joint outcomes rather than multiplied singles), `results.json` (alerts observed per night, used to settle bets) and `snapshots.json` (live alert states carried between builds). Contract and settlement rules: [docs/betting.md](docs/betting.md).
 
+The game lives on its own page, https://youngerfornday.github.io/tykho-chy-ni/play/ (installable as a home-screen app): tonight's line with macro-region filters, coupon with singles and accumulators, my bets with shareable night summaries, and progress. Gamification (levels, nightly missions, achievements, skill against the line, streaks) rewards forecasting skill rather than volume, never late-night activity or loss chasing: [docs/gamification.md](docs/gamification.md).
+
 ## Run locally
 
 ```sh
 python3 -m unittest discover -s tests
+node --test "tests/js/*.test.mjs"
 python3 -m forecast.build --cache-dir .cache      # writes site/data/forecast.json
 python3 -m http.server -d site 8000
 ```
 
 `python3 -m forecast.geo` regenerates `site/data/map.json` (committed; not part of the scheduled build).
 
-GitHub Actions rebuilds and deploys to Pages every 30 minutes (`.github/workflows/forecast.yml`). Python stdlib only.
+GitHub Actions rebuilds and deploys to Pages every 30 minutes (`.github/workflows/forecast.yml`). Python stdlib only; the site is vanilla ES modules with no build step.
 
 Fonts (Unbounded, Onest, JetBrains Mono) are self-hosted subsets from Google Fonts, licensed under the SIL Open Font License 1.1.

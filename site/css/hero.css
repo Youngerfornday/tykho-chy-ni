@@ -94,10 +94,10 @@
 }
 .picker__reset { background: transparent; cursor: pointer; }
 .picker__cta {
-  display: inline-flex; align-items: center; min-height: 44px; padding: 10px 16px; border-radius: var(--radius);
-  background: var(--yellow); color: #141921; font-weight: 700; text-decoration: none;
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px;
+  color: var(--ink-2); font-weight: 600; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 0.3em;
 }
-.picker__cta:hover { background: var(--yellow-soft); color: #141921; }
+.picker__cta:hover { color: var(--ink); text-decoration-color: var(--yellow); }
 .picker__select:hover, .picker__reset:hover { border-color: var(--muted); }
 
 .hero__disclaimer { margin: 1.4rem 0 0; font-size: 0.85rem; color: var(--muted); max-width: 52ch; }

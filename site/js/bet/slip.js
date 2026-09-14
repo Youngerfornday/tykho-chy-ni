@@ -75,8 +75,8 @@ export function quoteSlip(slip, line, { now, balance }) {
   return { ...quote, canPlace: !reason, reason };
 }
 
-export function buildTickets(slip, quote, line, now, makeId) {
-  const base = { placedAt: now, anchor: line.anchor, windowEnd: line.window_end, status: 'pending', payout: 0, settledAt: null };
+export function buildTickets(slip, quote, line, now, makeId, balanceBefore = null) {
+  const base = { placedAt: now, anchor: line.anchor, windowStart: line.window_start, windowEnd: line.window_end, balanceBefore, status: 'pending', payout: 0, settledAt: null };
   const legOf = (l) => ({ key: l.key, pick: l.pick, line: l.key === 'total_over' ? line.total_line : null, odds: l.odds });
   if (slip.mode === 'express') {
     return [{ ...base, id: makeId(), kind: 'express', stake: slip.stake, odds: quote.express.odds, legs: quote.legs.map(legOf) }];
